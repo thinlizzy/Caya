@@ -447,7 +447,7 @@ caya.AssetLoader = function() {
 	 * @example
 	 * // retreive a single asset from a category, result is a single object
 	 * loader.get('category.key');
-	 * // retreive multiple assets, result is an object of objects: {tree: data, house: data}
+	 * // retreive multiple assets, result is an object of objects: {key1: data, key2: data}
 	 * loader.get('category.key1', 'category.key2');
 	 * // alternative syntax
 	 * loader.get('category.key1, category.key2');
@@ -535,8 +535,7 @@ caya.AssetLoader = function() {
 	 * @example
 	 * // retreive a single asset from a category, result is a single object
 	 * loader.from('category').get('key');
-	 *
-	 * // retreive multiple assets, result is an object of objects: {tree: data, house: data}
+	 * // retreive multiple assets, result is an object of objects: {key1: data, key2: data}
 	 * loader.from('category').get('key1', 'key2');
 	 * // alternative syntax
 	 * loader.from('category').get('key1, key2');
