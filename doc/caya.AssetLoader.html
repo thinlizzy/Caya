@@ -235,7 +235,7 @@
     
 
     
-    <h4 class="name" id="acquire"><span class="type-signature"></span>acquire<span class="signature">(object, keys)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="from"><span class="type-signature"></span>from<span class="signature">(category)</span><span class="type-signature"> &rarr; {object}</span></h4>
     
 
     
@@ -243,7 +243,7 @@
 
 
 <div class="description">
-    Inflates an object with loaded assets.
+    Retreives a store of loaded assets from the main bank with the associated get function.
 </div>
 
 
@@ -279,170 +279,7 @@
 
         <tr>
             
-                <td class="name"><code>object</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Object to inflate.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>keys</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">A list of asset keys.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line491">line 491</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>var loader = new caya.AssetLoader();var assets = {   graphics: {      GFX_BACKGROUND: 'background.png',      GFX_SPRITE: 'sprite.png'   }};var graphics = {};loader.load(assets);loader.done = function() {   loader.acquire(graphics, {      background: 'GFX_BACKGROUND',      sprite: 'GFX_SPRITE'   });};state.draw = function() {   // ready to use   this.paint(graphics.background, 0, 0);   this.paint(graphics.sprite, 0, 0);});</code></pre>
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(key)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Retreives a loaded asset.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>key</code></td>
+                <td class="name"><code>category</code></td>
             
 
             <td class="type">
@@ -458,7 +295,7 @@
 
             
 
-            <td class="description last">Asset key.</td>
+            <td class="description last">Asset category to extract the store from.</td>
         </tr>
 
     
@@ -499,7 +336,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line459">line 459</a>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line545">line 545</a>
     </li></ul></dd>
     
 
@@ -522,8 +359,201 @@
 
 
 
+<h5>Returns:</h5>
+
+        
 
 
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>// retreive a single asset from a category, result is a single objectloader.from('category').get('key');// retreive multiple assets, result is an object of objects: {tree: data, house: data}loader.from('category').get('key1', 'key2');// alternative syntaxloader.from('category').get('key1, key2');loader.from('category').get('key1 key2');</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(&hellip;var_args)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Retreives loaded assets.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>var_args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Asset or asset list to retreive.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line456">line 456</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>// retreive a single asset from a category, result is a single objectloader.get('category.key');// retreive multiple assets, result is an object of objects: {tree: data, house: data}loader.get('category.key1', 'category.key2');// alternative syntaxloader.get('category.key1, category.key2');loader.get('category.key1 category.key2');</code></pre>
 
 
 
@@ -793,6 +823,92 @@
 
 
         
+            
+
+    
+
+    
+    <h4 class="name" id="~FromObject"><span class="type-signature">(inner) </span>FromObject<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    A From object containing a store from the main asset bank with theassociated get function.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line496">line 496</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     
 
     
@@ -814,7 +930,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Mar 31 2018 22:09:46 GMT+0200 (Central Europe Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Apr 01 2018 23:24:21 GMT+0200 (Central Europe Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

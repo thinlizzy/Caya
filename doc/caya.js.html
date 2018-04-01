@@ -27,7 +27,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/*
- * Caya 0.1.0
+ * Caya 0.1.2
  * Tiny HTML5 game engine
  *
  * (c) 2018 Danijel Durakovic
@@ -39,7 +39,7 @@
 
 /**
  * @file Caya
- * @version 0.1.0
+ * @version 0.1.2
  * @author Danijel Durakovic
  * @copyright 2018
  */
@@ -452,9 +452,12 @@ caya.AssetLoader = function() {
 		caya.iter(assetList, function(category, itemList) {
 			var loadHandler = self.handler[category];
 			if (loadHandler instanceof Function) {
+				if (!bank[category]) {
+					bank[category] = {};
+				}
 				caya.iter(itemList, function(key, filename) {
 					loadHandler(filename, function(asset) {
-						bank[key] = asset;
+						bank[category][key] = asset;
 						advanceLoad();
 					});
 				});
@@ -462,64 +465,115 @@ caya.AssetLoader = function() {
 		});
 	};
 
-
-
-	
-	//this.from = function(category) {
-	//	var assetList = bank[category];
-	//	return new FromObject(assetList);
-	//};
-
-	//function FromObject(assetList) {
-	//	this.get = function(/**/) {
-	//	};
-	//}
-
-	//this.get = function(/**/) {
-	//};
-
-
 	/**
-	 * Retreives a loaded asset.
+	 * Retreives loaded assets.
 	 *
-	 * @param {string} key - Asset key.
-	 */
-	this.get = function(key) {
-		return bank[key];
-	};
-
-	/**
-	 * Inflates an object with loaded assets.
+	 * @param {...object} var_args - Asset or asset list to retreive.
 	 *
-	 * @param {object} object - Object to inflate.
-	 * @param {array} keys - A list of asset keys.
+	 * @returns {object}
 	 *
 	 * @example
-	 * var loader = new caya.AssetLoader();
-	 * var assets = {
-	 *    graphics: {
-	 *       GFX_BACKGROUND: 'background.png',
-	 *       GFX_SPRITE: 'sprite.png'
-	 *    }
-	 * };
-	 * var graphics = {};
-	 * loader.load(assets);
-	 * loader.done = function() {
-	 *    loader.acquire(graphics, {
-	 *       background: 'GFX_BACKGROUND',
-	 *       sprite: 'GFX_SPRITE'
-	 *    });
-	 * };
-	 * state.draw = function() {
-	 *    // ready to use
-	 *    this.paint(graphics.background, 0, 0);
-	 *    this.paint(graphics.sprite, 0, 0);
-	 * });
+	 * // retreive a single asset from a category, result is a single object
+	 * loader.get('category.key');
+	 * // retreive multiple assets, result is an object of objects: {tree: data, house: data}
+	 * loader.get('category.key1', 'category.key2');
+	 * // alternative syntax
+	 * loader.get('category.key1, category.key2');
+	 * loader.get('category.key1 category.key2');
 	 */
-	this.acquire = function(object, keys) {
-		caya.iter(keys, function(key, item) {
-			object[key] = bank[item];
-		});
+	this.get = function(/**/) {
+		var n_args = arguments.length;
+		var tokens;
+		var tokenPair;
+		var output = {};
+		var n_objects = 0;
+		var category, assetName;
+		var assetData;
+		var i, j;
+		for (i = 0; i &lt; n_args; i++) {
+			if (typeof arguments[i] !== 'string')
+				continue;
+			tokens = arguments[i]
+				.trim()
+				.replace(/,/g, '')
+				.split(/\s+/);
+			for (j = 0; j &lt; tokens.length; j++) {
+				tokenPair = tokens[j].split('.');
+				if (tokenPair.length === 2) {
+					category = tokenPair[0];
+					assetName = tokenPair[1];
+					assetData = (bank[category]) ? bank[category][assetName] : undefined;
+					output[assetName] = assetData;
+					n_objects++;
+				}
+			}
+		}
+		if (n_objects == 1) {
+			return output[Object.keys(output)[0]];
+		}
+		else if (n_objects > 1) {
+			return output;
+		}
+	};
+
+
+	/**
+	 * A From object containing a store from the main asset bank with the
+	 * associated get function.
+	 */
+	function FromObject(store) {
+		this.get = function(/**/) {
+			var n_args = arguments.length;
+			var tokens;
+			var output = {};
+			var n_objects = 0;
+			var assetName;
+			var assetData;
+			var i, j;
+			for (i = 0; i &lt; n_args; i++) {
+				if (typeof arguments[i] !== 'string')
+					continue;
+				tokens = arguments[i]
+					.trim()
+					.replace(/,/g, '')
+					.split(/\s+/);
+				for (j = 0; j &lt; tokens.length; j++) {
+					assetName = tokens[j];
+					assetData = store[assetName];
+					output[assetName] = assetData;
+					n_objects++;
+				}
+			}
+			if (n_objects == 1) {
+				return output[Object.keys(output)[0]];
+			}
+			else if (n_objects > 1) {
+				return output;
+			}
+		};
+	}
+
+	/**
+	 * Retreives a store of loaded assets from the main bank with the associated get function.
+	 *
+	 * @param {string} category - Asset category to extract the store from.
+	 *
+	 * @returns {object}
+	 *
+	 * @example
+	 * // retreive a single asset from a category, result is a single object
+	 * loader.from('category').get('key');
+	 *
+	 * // retreive multiple assets, result is an object of objects: {tree: data, house: data}
+	 * loader.from('category').get('key1', 'key2');
+	 * // alternative syntax
+	 * loader.from('category').get('key1, key2');
+	 * loader.from('category').get('key1 key2');
+	 */	
+	this.from = function(category) {
+		if (typeof category === 'string') {
+			return new FromObject(bank[category.trim()]);
+		}
 	};
 };
 /**
@@ -1688,7 +1742,7 @@ caya.Game = function(options) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Mar 31 2018 22:09:46 GMT+0200 (Central Europe Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Apr 01 2018 23:24:21 GMT+0200 (Central Europe Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

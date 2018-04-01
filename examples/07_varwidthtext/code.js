@@ -12,7 +12,7 @@ myState.init = function() {
 	// it is safe to skip characters that have the same width as the
 	// default character width
 	this.font = new caya.Font({
-		graphics: myLoader.get('font_gfx'), // font graphics
+		graphics: myLoader.get('graphics.font'), // font graphics
 		size: [12, 18], // default character width and height
 		spacing: 3, // font spacing
 		widths: { // character widths, this can either be a key-value map or an ordered array
@@ -138,7 +138,7 @@ var myGame = new caya.Game({
 var myAssets = {
 	// font graphics
 	graphics: {
-		font_gfx: 'font.png'
+		font: 'font.png'
 	}
 };
 

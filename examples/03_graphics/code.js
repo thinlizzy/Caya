@@ -15,7 +15,7 @@ var myState = new caya.State();
 
 // called when state initializes
 myState.init = function() {
-	this.sprite = myLoader.get('sprite');
+	this.sprite = myLoader.get('graphics.sprite');
 };
 
 // draw the sprite

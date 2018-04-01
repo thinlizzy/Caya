@@ -2,30 +2,14 @@
  *  Caya Example 06 - Text
  *
  */
-
-// asset list
-var myAssets = {
-	// font graphics
-	graphics: {
-		font_gfx: 'font.png'
-	}
-};
-
-// asset loader
-var myLoader = new caya.AssetLoader();
-
-// called when loader finishes loading assets
-myLoader.done = function() {
-	myGame.run();
-};
-
+ 
 // create the main state
 var myState = new caya.State();
 
 // called when state initializes
 myState.init = function() {
 	this.font = new caya.Font({
-		graphics: myLoader.get('font_gfx'),
+		graphics: myLoader.get('graphics.font'),
 		size: [16, 16]
 	});
 };
@@ -51,7 +35,21 @@ var myGame = new caya.Game({
 	simpleLoop: true // use a simple game loop that only draws and doesn't call state.update
 });
 
+// asset list
+var myAssets = {
+	// font graphics
+	graphics: {
+		font: 'font.png'
+	}
+};
+
+// asset loader
+var myLoader = new caya.AssetLoader();
+
 // load assets on window load
 window.addEventListener('load', function() {
-	myLoader.load(myAssets);
+	myLoader.load({
+		assets: myAssets,
+		done: myGame.run
+	});
 });
