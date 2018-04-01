@@ -370,9 +370,7 @@ caya.AssetLoader = function() {
 
 	/**
 	 * Loads a list of assets. Iterates over categories in the list and then calls
-	 * the appropriate load handler on every item in the category. Note that assets
-	 * are stored in a flat array, which means that asset keys across all categories
-	 * must be unique.
+	 * the appropriate load handler on every item in the category.
 	 *
 	 * @param {object} options
 	 * @param {object} options.assets - A categorized list of assets.
