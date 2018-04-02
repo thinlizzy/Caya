@@ -63,11 +63,11 @@ var myGame = new caya.Game({
 window.addEventListener('load', myGame.run);
 ```
 
-That's it! Your first Caya game is complete. If you run it, you will see a nice red square of size 50x50 pixels displayed at position 10, 10 on your canvas.
+That's it! Your first Caya game is complete. If you run it in your browser, you will see a nice red square displayed on your canvas.
 
 A game state represents a single segment of the game, or a screen. You may for example create one state for the game menu, another for the actual game, yet another for story screen, and so on. In the code above, we're using the state's `draw` function to paint to the screen. This function gets called by the Game object whenever this particular state is active. Note the `state: myState` line which informs the engine that we would like `myState` to be the initial state for when the game runs. This argument is needed for the game to run and is not optional. Once running, we may change the game state using `myGame.setState(nextState)`.
 
-Note the line that reads `simpleLoop: true`. This informs the engine that we would like to make a game where we don't care for logic updates, we only want to draw to the screen. Defining this flag will make the engine run an alternate game loop that's optimized for this mode. Use it if your game relies on user input to change the game state. You will need to code your own timer and transition functions to support animations in this mode. To avoid entering this mode, simpy skip the definition.
+Note the line that reads `simpleLoop: true`. This informs the engine that we would like to make a game where we don't care for logic updates, we only want to draw to the screen. Defining this flag will make the engine run an alternate game loop that's optimized for this mode. Use it if your game relies on user input to "push" the game forward. You will need to code your own timer and transition functions to support animations in this mode. To avoid entering this mode, simpy skip the definition.
 
 What if we want to make a simple animation instead? Let's define both update and draw functions for our state, and let's use a regular loop for our game:
 
@@ -80,14 +80,14 @@ var myState = new caya.State();
 myState.init = function() {
 	// initialize all our goodies here
 	this.rotation = 0;
-	this.circle_x = -100;
-	this.circle_y = -100;
 };
 
 // state draw function
 myState.draw = function() {
 	// draw a blue circle
-	this.paint.circleFill(this.circle_x, this.circle_y, 30, 'blue');
+	var circle_x = 50 * Math.cos(this.rotation) + 200;
+	var circle_y = 50 * Math.sin(this.rotation) + 200;
+	this.paint.circleFill(circle_x, circle_y, 30, 'blue');
 };
 
 // state update function
@@ -96,11 +96,6 @@ myState.update = function(dt) {
 	// increase rotation
 	var speed = 0.1;
 	this.rotation += speed * dt;
-	// update circle position
-	var offset = 200;
-	var radius = 50;
-	this.circle_x = radius * Math.cos(this.rotation) + offset;
-	this.circle_y = radius * Math.sin(this.rotation) + offset;
 };
 
 // setup the game
@@ -113,7 +108,7 @@ var myGame = new caya.Game({
 window.addEventListener('load', myGame.run);
 ```
 
-This will display a rotating blue circle. Note the `init` function, which is meant for initialization of variables and preparation of data. This function is called once as the state is being initialized. This happens automatically when the state is entered into for the first time, or you can initialize states manually using `myGame.initStates([state1, state2, ...])`.
+This will display a rotating blue circle. Note the `init` function, which is meant for initialization of variables and preparation of data. This function is called once as the state is being initialized. This happens automatically when the state is entered into for the first time, or you can initialize states manually using `myGame.initStates([state1, state2, ...])`. Either way, `init` is guaranteed to only be executed once.
 
 Note that we are **not** using `simpleLoop` in the above example. This means that the engine will call both `update` and `draw` functions on the active game state.
 
