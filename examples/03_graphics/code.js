@@ -3,13 +3,6 @@
  *
  */
 
-// asset list
-var myAssets = {
-	graphics: {
-		sprite: 'sprite.png'
-	}
-};
-
 // create the main state
 var myState = new caya.State();
 
@@ -29,6 +22,13 @@ var myGame = new caya.Game({
 	state: myState, // initial game state
 	simpleLoop: true // use a simple game loop that only draws and doesn't call state.update
 });
+
+// asset list
+var myAssets = {
+	graphics: {
+		sprite: 'sprite.png'
+	}
+};
 
 // asset loader
 var myLoader = new caya.AssetLoader();

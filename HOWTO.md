@@ -193,7 +193,7 @@ myState.exit = function() {
 };
 ```
 
-All functions all optional. When `simpleLoop` is used, `update` will be ignored.
+All functions are optional. When `simpleLoop` is used, `update` will be ignored.
 
 You can use an alternate syntax if you want to:
 
@@ -219,7 +219,7 @@ var myState = new caya.State({
 
 ### Render
 
-The Render class contains
+The Render class contains functions that deal with on-screen rendering.
 
 ### Surface
 
