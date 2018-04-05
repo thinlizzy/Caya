@@ -2,23 +2,23 @@
 
 ## Contents
 
-- Introduction
+- [Introduction](#introduction)
 - [Quick start guide](#quick-start-guide)
-- Classes
-   - Game
-   - State
-   - Render
-   - Surface
-   - Input
-   - KeyInput
-   - AssetLoader
-   - Grid2D
-   - Timer
-   - Configuration
-   - Font
-- Other functions
-   - General purpose
-   - Math and randomness
+- [Classes](#classes)
+   - [Game](#game)
+   - [State](#state)
+   - [Render](#render)
+   - [Surface](#surface)
+   - [Input](#input)
+   - [KeyInput](#keyinput)
+   - [AssetLoader](#assetloader)
+   - [Grid2D](#grid2d)
+   - [Timer](#timer)
+   - [Configuration](#configuration)
+   - [Font](#font)
+- [Other functions](#other-functions)
+   - [General purpose](#general-purpose)
+   - [Math and randomness](#math-and-randomness)
 
 ## Introduction
 
@@ -147,9 +147,23 @@ var activeState = myGame.getState();
 
 States will initialize automatically when they are first entered into. For cases where you wish to manually initialize states, use:
 
-``JavaScript
+```JavaScript
 myGame.initStates([state1, state2, ...]);
 ```
+
+To set view mode:
+```JavaScript
+// centers canvas element to parent
+myGame.setViewMode('center');
+// scales canvas element to parent maintaining a fixed aspect ratio
+myGame.setViewMode('scale-fit');
+// scales canvas element to parent fully, ignoring aspect ratio
+myGame.setViewMode('scale-stretch');
+// expands canvas element to parent, changing physical diemensions of the canvas
+myGame.setViewMode('expand');
+```
+
+Changing the view mode effects user input since coordinates must be translated accordingly. This is handled automatically in the Input class.
 
 ### State
 
@@ -204,6 +218,8 @@ var myState = new caya.State({
 ```
 
 ### Render
+
+The Render class contains
 
 ### Surface
 
