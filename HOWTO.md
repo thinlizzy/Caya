@@ -2,7 +2,7 @@
 
 ## Contents
 
-- Core concepts and philosophy
+- Introduction
 - [Quick start guide](#quick-start-guide)
 - Classes
    - Game
@@ -11,6 +11,7 @@
    - Surface
    - Input
    - KeyInput
+   - AssetLoader
    - Grid2D
    - Timer
    - Configuration
@@ -19,9 +20,9 @@
    - General purpose
    - Math and randomness
 
-## Core concepts and philosophy
+## Introduction
 
-This library provides a collection of classes and functions that aim to simplify some of the heavy-lifting involved in implementing simple 2D games using HTML5. The library aims to be lightweight and provide a clear API that's both powerful and easy to use, and lets you focus on game logic instead of working with all the technical details behind the scenes.
+This library provides a collection of classes and functions that aim to simplify some of the heavy-lifting involved in implementing simple 2D games using HTML5. It aims to be lightweight and provide a clear API that's both powerful and easy to use, and lets you focus on game logic instead of working with all the technical details behind the scenes.
 
 ## Quick start guide
 
@@ -118,7 +119,89 @@ See the examples folder for more examples on API usage.
 
 ### Game
 
+The Game class constructs a Game object that exists at the core of a Caya game. It handles initialization and main game loop. It is initialized in the following way:
+
+```JavaScript
+var myGame = new caya.Game({
+	canvasId: 'myCanvasID',
+	state: myState
+});
+```
+
+The argument `canvasId` is the ID of the `<canvas>` element in the DOM tree. The `state` argument points to the initial game state. Both parameters are required. Optionally, you can define `simpleLoop: true` in the arguments list to make the engine use a simplified loop that doesn't call the `update` function on states.
+
+The game will not start automatically. To start the game, use:
+```JavaScript
+myGame.run();
+```
+
+To change the active game state:
+```JavaScript
+myGame.setState(nextState);
+```
+
+To retreive the active game state:
+```JavaScript
+var activeState = myGame.getState();
+```
+
+States will initialize automatically when they are first entered into. For cases where you wish to manually initialize states, use:
+
+``JavaScript
+myGame.initStates([state1, state2, ...]);
+```
+
 ### State
+
+The State class allows you to create State instances. These can be used to handle various game screens. At least one state is needed for a Caya game to function. A state with its corresponding functions is defined in the following way:
+
+```JavaScript
+var myState = new caya.State();
+
+myState.init = function() {
+	/* initialize state here */
+};
+
+myState.draw = function() {
+	/* draw to screen here */
+};
+
+myState.update = function(dt) {
+	/* update state here */
+};
+
+myState.enter = function() {
+	/* state was entered */
+};
+
+myState.exit = function() {
+	/* state was exited */
+};
+```
+
+All functions all optional. When `simpleLoop` is used, `update` will be ignored.
+
+You can use an alternate syntax if you want to:
+
+```JavaScript
+var myState = new caya.State({
+	init: function() {
+		/* initialize state here */
+	},
+	draw: function() {
+		/* draw to screen here */
+	},
+	update: function(dt) {
+		/* update state here */
+	},
+	enter: function() { 
+		/* state was entered */
+	},
+	exit: function() {
+		/* state was exited */
+	}
+});
+```
 
 ### Render
 
@@ -127,6 +210,8 @@ See the examples folder for more examples on API usage.
 ### Input
 
 ### KeyInput
+
+### AssetLoader
 
 ### Grid2D
 

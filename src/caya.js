@@ -1625,7 +1625,7 @@ caya.Game = function(options) {
 	 * Sets the view mode.
 	 *
 	 * @param {string|number} mode - Set the view mode to one of the following:
-	 *   'default', 'scale_preserveratio', 'scale_full', or 'expand'.
+	 *   'center', 'scale-fit', 'scale-stretch', or 'expand'.
 	 */
 	this.setViewMode = function(mode) {
 		// remove the update handler and the resize event
