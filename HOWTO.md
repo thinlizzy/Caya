@@ -695,4 +695,71 @@ Examples on usage can be found in the [/examples/](examples/) folder.
 
 ### General purpose
 
+Listed here are some of the general purpose functions that may come in handy when developing games:
+
+`compose` creates a number of JavaScript objects and creates a single object out of them. This is useful for creating any sort of entity-component systems, as well as extending functionality of objects or simply using it for syntax sugar. It uses Object.assign under the hood or emulates it on non-ES6 compliant browsers.
+```JavaScript
+var result = caya.compose({
+	apples: 10
+}, {
+	oranges: 20
+});
+// result: { apples: 10, oranges: 20 }
+```
+
+`iter` iterates over members of an object, ignoring any member functions.
+```JavaScript
+var object = {
+	pumpkins: 30,
+	strawberries: 40
+};
+caya.iter(object, function(key, item) {
+	console.log(key + ': ' + item);
+});
+```
+
+`getFilenameExtension` retreives the extension of a filename.
+```JavaScript
+var filename = `file.json';
+caya.getFilenameExtension(filename); // returns 'json'
+```
+
 ### Math and randomness
+
+`clamp` returns a number, constrained to a given range.
+```JavaScript
+var number = 10;
+var min = 20;
+var max = 40;
+caya.clamp(number, min, max); // returns 20
+```
+
+`pointInRect` checks whether a point is within a given rectangle:
+```JavaScript
+var pointX = 20;
+var pointY = 30;
+var rectX = 10;
+var rectY = 10;
+var rectWidth = 80;
+var rectHeight = 100;
+caya.pointInRect(pointX, pointY, rectX, rectY, rectWidth, rectHeight); // returns true
+```
+
+`getRandomInt` returns an integer from a range at random:
+```JavaScript
+var min = 20;
+var max = 40;
+caya.getRandomInt(min, max); // returns a number between 20 and 40 (inclusive)
+```
+
+`shuffle` shuffles an array:
+```JavaScript
+var values = [1, 2, 4, 8, 16];
+caya.shuffle(values);
+```
+
+`choose` picks an element from an array at random:
+```JavaScript
+var values = [1, 2, 3];
+caya.choose(values); // returns either 1, 2 or 3
+```
