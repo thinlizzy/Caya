@@ -494,7 +494,7 @@ var myAssets = {
 };
 ```
 
-To preload assets, use the `load` function. Optionally, you can attach a `progress` function to track the load progress:
+To preload assets, use the `load` function. Use the `assets` attribute to point to a list of assets you want preloaded. Attach a `done` function to inform you of when all processing is complete. Optionally, you can attach a `progress` function to track the load progress:
 ```JavaScript
 myAssets.load({
 	assets: myAssets,
@@ -509,7 +509,7 @@ myAssets.load({
 });
 ```
 
-To retreive assets once they have been loaded, use `get`:
+To retreive assets once they have been loaded, use the `get` function:
 ```JavaScript
 var gfxPlayer = myAssets.get('graphics.player');
 var storyText = myAssets.get('text.story');
@@ -521,7 +521,7 @@ var gfx = myAssetLoader.get('graphics.player graphics.monster graphics.backgroun
 // we can now use gfx.player, gfx.monster, gfx.background
 ```
 
-You can use `from` to make your life easier:
+You can use the `from` function to make your life easier:
 ```JavaScript
 var gfx = myAssetLoader.from('graphics').get('player monster background');
 var story = myAssetLoader.from('text').get('story');
@@ -584,11 +584,112 @@ myLoader.load({
 
 ### Grid2D
 
+The Grid2D class is a simple container for a 2D matrix of values. It can be instantiated in the following way:
+```JavaScript
+// creates a grid of size 100x100 with the default value 0
+var gridWidth = 100;
+var gridHeight = 100;
+var gridDefaultValue = 0;
+var myGrid = new caya.Grid2D(gridWidth, gridHeight, gridDefaultValue);
+```
+
+Use the `clear` function to clear the entire grid to the default value specified in the constructor:
+```JavaScript
+myGrid.clear();
+```
+
+Note that on instantiation, grid values are undefined until `clear` is applied.
+
+Use the `set` function to set a grid value:
+```JavaScript
+var x = 10;
+var y = 10;
+var value = 20;
+myGrid.set(x, y, value);
+```
+
+Use the `get` function to retreive a value from the grid:
+```JavaScript
+var x = 10;
+var y = 10;
+var value = myGrid.get(x, y);
+```
+
 ### Timer
+
+The Timer class is used for creating simple, tick-based Timer objects that can be used in conjunction with a state's `update` function.
+
+To create a Timer:
+```JavaScript
+var interval = 60; // specifies the rate at which the timer ticks. 60 ticks ~ 1 second
+var myTimer = new caya.Timer(interval);
+```
+
+A timer's interval represents the number of ticks that need to occur for the timer to tick. Example usage:
+```JavaScript
+myState.init = function() {
+	this.showRectangle = true;
+};
+
+myState.draw = function() {
+	if (this.showRectangle) {
+		this.paint.rectFill(20, 20, 100, 100, 'purple');
+	}
+};
+
+myState.update = function(dt) {
+	if (myTimer.run(dt)) {
+		// timer has ticked
+		// toggle visibility of rectangle
+		this.showRectangle = !this.showRectangle;
+	}
+};
+```
+
+The `run` function is passed the `dt` parameter and reports back whether or not the timer has ticked. Alternatively, you can ignore the return value and check whether the timer has ticked or not by accessing the `ticked` property. You can use `reset` to reset the timer back to initial state:
+```JavaScript
+myTimer.reset();
+```
 
 ### Configuration
 
+The Configuration class provides a way to handle persistant storage for your game. It wraps the localStorage API in a neat and easy to use interface. You may instantiate more than one Configuration as long as keys for each configuration remain unique.
+
+A Configuration object is initialized in the following way:
+
+```javascript
+var myKey = 'example';
+var myDefaultConfig = {
+	foo: 'value',
+	bar: 0
+};
+var myConfig = new Z9.Configuration(myKey, myDefaultConfig);
+```
+
+A configuration object acts like any other object and you may populate it with any sort of data. A default configuration serves as a template for your configuration. A `load` call needs to be applied at the start of the game to retreive the active configuration. If none is found within localStorage, the defaults will be used.
+
+You can control saving and loading using the `save` and `load` functions:
+```javascript
+// NOTE: myConfig will remain empty untill a load call is applied!
+
+// load configuration
+// load retreives the configuration from local storage if the key is present;
+// otherwise it retreives the default configuration
+myConfig.load();
+
+// do some changes to configuration
+myConfig.foo = 'other value';
+myConfig.bar = 2;
+
+// save configuration to local storage
+myConfig.save();
+```
+
 ### Font
+
+The Font class provides a bitmap font construct. This is useful for some games that only require a limited set of characters. The problem with regular HTML5 text routines is that they can slow the game down if the text is being redrawn over and over again. This can be solved by pre-rendering texts and then drawing those as sprites, but you still can't have dynamic texts unless you develop some sort of a workaround where you dynamically render only changes to the text. The other problem with text is it is very often inconsistent between browsers, where one browser will render your text slightly offset to the top, or the spacing will be different, or hinting, etc. Modern browsers are very complex in their way to render fonts and this comes with its own set of problems with regards to game development. This class essentially dumbs down font rendering by displaying text characters as sprites in a tileset, and provides an interface for ease of use. You are limited to an ASCII range of characters with this class and you will also need to create your own fonts (create graphics and define character widths) to go with it.
+
+Examples on usage can be found in the [/examples/](examples/) folder.
 
 ## Other functions
 
