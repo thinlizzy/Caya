@@ -113,7 +113,9 @@ This will display a blue circle orbiting around a central point. Note the `init`
 
 Note that we are **not** using `simpleLoop` in the above example. This means that the engine will call both `update` and `draw` functions on the active game state.
 
-Ideally, we would do all of our state calculations in the `update` functions and we would only use `draw` for rendering calls - however, this makes the example simpler since we don't need to bother with extra variables. Generally speaking, it's ok to do some calculations on the rendering side of your game, as long as you keep all the game logic updates in the `update` function. You should always keep performance in mind when writing any sort of code in either of these functions, as these are being updated in real time (in most cases that means about 60 times per second). The purpose of the `update` function is to update the game state to a renewed state, constantly keeping it afresh as it were, and the purpose of the `draw` function is to render whatever state the game is currently in, to the screen.
+Ideally, we would do all of our state calculations in the `update` functions and we would only use `draw` for rendering calls. However, doing some calculations inside `draw` makes the example above simpler since we don't need to bother with defining extra variables. Generally speaking, it's ok to do some calculations on the rendering side of your game as long as you keep all the game logic updates in the `update` function. The purpose of the `update` function is to update the game state to a renewed state, constantly keeping it afresh as it were, and the purpose of the `draw` function is to render whatever state the game is currently in, to the screen.
+
+You should always keep performance in mind when writing any sort of code in either of these functions, as these are being updated in real time (in most cases that means about 60 times per second).
 
 Below is a short summary of classes and functions in Caya. See the [examples](examples/) folder for more examples on usage. See the [doc](doc/) folder for API reference.
 
