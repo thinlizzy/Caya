@@ -217,9 +217,52 @@ var myState = new caya.State({
 });
 ```
 
+The `init` function initializes and prepares the state and is guaranteed to only be invoked once per state. The `draw` function is used for rendering graphics to screen and `update` is used for updating state logic and is called with the `dt` (delta time) parameter which represents time passed from last update call. When a state becomes active, `enter` is called. Similarly, when the state stops being active, `exit` is called.
+
 ### Render
 
-The Render class contains functions that deal with on-screen rendering.
+The Render class contains functions that deal with on-screen rendering. Render is already present when a Surface is initialized (see next section for information on the Surface class).
+
+It can be accessed in state via `state.surface.render` or the shorthand `state.paint`. It is preferable to use the shorthand method.
+
+Methods are listed below. Note the optional and default values.
+
+Rendering shapes:
+```JavaScript
+// rectangle
+rect(x, y, width, height, [lineColor='#fff'], [lineWidth=1]);
+// filled rectangle
+rect(x, y, width, height, [backgroundColor='#fff']);
+// circle
+circle(x, y, radius, lineColor, [lineWidth=1)];
+// filled circle
+circleFill(x, y, radius, [backgroundColor='#fff']);
+// arc (part of a circle)
+arc(x, y, radius, startAngle, endAngle, [lineColor='#fff'], [lineWidth=1]);
+// solid polygon
+points = [[x1, y1], [x2, y2], ...];
+polygon(points, [backgroundColor='#fff']);
+```
+
+Rendering graphics and tiles:
+```JavaScript
+// plain or stretched graphics
+graphics(gfxSource, x, y, [width], [height]);
+// surface
+surface(surfaceSource, x, y);
+// tile
+tile(gfxSource, tileX, tileY, tileWidth, tileHeight, sourceX, sourceY);
+// stretched tile
+stretchTile(gfxSource, tileX, tileY, sourceWidth, sourceHeight, sourceX, sourceY, tileWidth, tileHeight);
+// native text
+text(text, x, y, [textColor='#fff'], [alignment='left'], [font='11px sans-serif']);
+// bitmap text
+bmptext(fontGraphics, text, x, y, [colorIndex=0], [align=0]);
+```
+
+Alpha blending example:
+
+Rotation example:
 
 ### Surface
 
