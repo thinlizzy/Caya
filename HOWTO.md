@@ -574,7 +574,7 @@ myLoader.load({
 	assets: myAssets,
 	done: function() {
 		// retreive sfx
-		var sfx_foo = myLoader.get('sfx.foo);
+		var sfx_foo = myLoader.get('sfx.foo');
 		var sfx_bar = myLoader.get('sfx.bar');
 		// play foo
 		sfx_foo.play();
