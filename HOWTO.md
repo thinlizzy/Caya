@@ -109,11 +109,13 @@ var myGame = new caya.Game({
 window.addEventListener('load', myGame.run);
 ```
 
-This will display a rotating blue circle. Note the `init` function, which is meant for initialization of variables and preparation of data. This function is called once as the state is being initialized. This happens automatically when the state is entered into for the first time, or you can initialize states manually using `myGame.initStates([state1, state2, ...])`. Either way, `init` is guaranteed to only be executed once.
+This will display a blue circle orbiting around a central point. Note the `init` function, which is meant for initialization of variables and preparation of data. This function is called once as the state is being initialized. This happens automatically when the state is entered into for the first time, or you can initialize states manually using `myGame.initStates([state1, state2, ...])`. Either way, `init` is guaranteed to only be executed once.
 
 Note that we are **not** using `simpleLoop` in the above example. This means that the engine will call both `update` and `draw` functions on the active game state.
 
-See the examples folder for more examples on API usage.
+Ideally, we would do all of our state calculations in the `update` functions and we would only use `draw` for rendering calls - however, this makes the example simpler since we don't need to bother with extra variables. Generally speaking, it's ok to do some calculations on the rendering side of your game, as long as you keep all the game logic updates in the `update` function. You should always keep performance in mind when writing any sort of code in either of these functions, as these are being updated in real time (in most cases that means about 60 times per second). The purpose of the `update` function is to update the game state to a renewed state, constantly keeping it afresh as it were, and the purpose of the `draw` function is to render whatever state the game is currently in, to the screen.
+
+Below is a short summary of classes and functions in Caya. See the [examples](examples/) folder for more examples on usage. See the [doc](doc/) folder for API reference.
 
 ## Classes
 
@@ -299,8 +301,8 @@ myGame.getSurface().render
 To add a custom function to renderer:
 ```JavaScript
 caya.compose(myGame.getSurface().render, {
-	blueRectangle: function(x, y) {
-		// renders a blue rectangle at x, y
+	blueCircle: function(x, y) {
+		// renders a blue circle at x, y
 		// use this.ctx for raw API calls
 		this.ctx.strokeStyle = 'blue';
 		this.ctx.lineWidth = 10;
@@ -311,13 +313,59 @@ caya.compose(myGame.getSurface().render, {
 
 myState.draw = function() {
 	// we can now use the function in any state
-	this.paint.blueRectangle(20, 20);
+	this.paint.blueCircle(20, 20);
 };
 ```
 
 In a future version you will also be able to substitute the default renderer with your own.
 
 ### Surface
+
+A Surface is a class that wraps a `<canvas>` element and includes a renderer. A global surface is instantiated when the game first runs and is available to all game states. You can instantiate your own surfaces to pre-render graphics. This is useful for optimizing expensive graphic calls.
+
+To create a Surface object:
+```JavaScript
+var mySurface = new caya.Surface({
+	width: 200,
+	height: 200
+});
+```
+
+This creates a Surface with its own internal `<canvas>` of specified dimensions.
+
+If you need to, you may also create a Surface to wrap an already existing `<canvas>` element:
+```JavaScript
+var sourceCanvas = document.getElementById('someCanvasID');
+var mySurface = new caya.Surface({
+	fromCanvas: sourceCanvas
+});
+```
+
+You can access the internal `<canvas>` element with `mySurface.canvas`.
+
+To draw on a Surface, simply access the internal `render` object and use any of its methods:
+```JavaScript
+// paints a yellow rectangle of size 50x50 at 20, 20 onto mySurface
+mySurface.render.rectFill(20, 20, 50, 50, 'yellow');
+```
+
+To clear a surface:
+```JavaScript
+mySurface.clear();
+```
+
+By default, surfaces will clear to transparent color. You can set a solid fill color instead if needed:
+```JavaScript
+// sets fill clear method with default (black) color
+mySurface.setFillClearMethod();
+// sets fill clear method with custom color
+mySurface.setFillClearMethod('#aabbcc');
+```
+
+To toggle back to default clear method:
+```JavaScript
+mySurface.setDefaultClearMethod();
+```
 
 ### Input
 
