@@ -24,6 +24,8 @@
 
 This library provides a collection of classes and functions that aim to simplify some of the heavy-lifting involved in implementing simple 2D games using HTML5. It aims to be lightweight and provide a clear API that's both powerful and easy to use, and lets you focus on game logic instead of working with all the technical details behind the scenes.
 
+This engine is still in ongoing development. The release version is stable but the API may change in future releases.
+
 ## Quick start guide
 
 To get started, create a HTML file with your favorite HTML5 template and add a canvas element to it:
@@ -617,9 +619,9 @@ var value = myGrid.get(x, y);
 
 ### Timer
 
-The Timer class is used for creating simple, tick-based Timer objects that can be used in conjunction with a state's `update` function.
+The Timer class is used for creating simple, tick-based timer objects that can be used in conjunction with a state's `update` function.
 
-To create a Timer:
+To create a Timer object:
 ```JavaScript
 var interval = 60; // specifies the rate at which the timer ticks. 60 ticks ~ 1 second
 var myTimer = new caya.Timer(interval);
@@ -646,7 +648,9 @@ myState.update = function(dt) {
 };
 ```
 
-The `run` function is passed the `dt` parameter and reports back whether or not the timer has ticked. Alternatively, you can ignore the return value and check whether the timer has ticked or not by accessing the `ticked` property. You can use the `reset` function to reset the timer back to initial state:
+The `run` function is passed the `dt` parameter and reports back whether or not the timer has ticked. Alternatively, you can ignore the return value and check whether the timer has ticked or not by accessing the `ticked` property.
+
+You can use the `reset` function to reset the timer back to initial state:
 ```JavaScript
 myTimer.reset();
 ```
@@ -666,7 +670,7 @@ var myDefaultConfig = {
 var myConfig = new Z9.Configuration(myKey, myDefaultConfig);
 ```
 
-A configuration object acts like any other object and you may populate it with any sort of data. A default configuration serves as a template for your configuration. A `load` call needs to be applied at the start of the game to retreive the active configuration. If none is found within localStorage, the defaults will be used.
+A configuration object acts like any other object and you may populate it with any sort of data. A default configuration serves as a template for your configuration. A `load` call needs to be applied at the start of the game to retreive the active configuration. If none is found within localStorage, the default configuration will be used.
 
 You can control saving and loading using the `save` and `load` functions:
 ```javascript
@@ -693,9 +697,9 @@ Examples on usage can be found in the [/examples/](examples/) folder.
 
 ## Other functions
 
-### General purpose
+Listed here are some of the functions included in Caya that may come in handy when developing games:
 
-Listed here are some of the general purpose functions that may come in handy when developing games:
+### General purpose
 
 `compose` creates a number of JavaScript objects and creates a single object out of them. This is useful for creating any sort of entity-component systems, as well as extending functionality of objects or simply using it for syntax sugar. It uses Object.assign under the hood or emulates it on non-ES6 compliant browsers.
 ```JavaScript
