@@ -223,22 +223,25 @@ The `init` function initializes and prepares the state and is guaranteed to only
 
 The Render class contains functions that deal with on-screen rendering. Render is already present when a Surface is initialized (see next section for information on the Surface class).
 
-It can be accessed in state via `state.surface.render` or the shorthand `state.paint`. It is preferable to use the shorthand method.
-
-Methods are listed below. Note the optional and default values.
+It can be accessed via `state.surface.render` or the shorthand `state.paint`. It is preferable to use the shorthand method. Methods are listed below. Note the optional and default values.
 
 Rendering shapes:
 ```JavaScript
 // rectangle
 rect(x, y, width, height, [lineColor='#fff'], [lineWidth=1]);
+
 // filled rectangle
-rect(x, y, width, height, [backgroundColor='#fff']);
+rectFill(x, y, width, height, [backgroundColor='#fff']);
+
 // circle
 circle(x, y, radius, lineColor, [lineWidth=1)];
+
 // filled circle
 circleFill(x, y, radius, [backgroundColor='#fff']);
+
 // arc (part of a circle)
 arc(x, y, radius, startAngle, endAngle, [lineColor='#fff'], [lineWidth=1]);
+
 // solid polygon
 points = [[x1, y1], [x2, y2], ...];
 polygon(points, [backgroundColor='#fff']);
@@ -248,21 +251,71 @@ Rendering graphics and tiles:
 ```JavaScript
 // plain or stretched graphics
 graphics(gfxSource, x, y, [width], [height]);
+
 // surface
-surface(surfaceSource, x, y);
+surface(surface, x, y);
+
 // tile
 tile(gfxSource, tileX, tileY, tileWidth, tileHeight, sourceX, sourceY);
+
 // stretched tile
 stretchTile(gfxSource, tileX, tileY, sourceWidth, sourceHeight, sourceX, sourceY, tileWidth, tileHeight);
+
 // native text
 text(text, x, y, [textColor='#fff'], [alignment='left'], [font='11px sans-serif']);
+
 // bitmap text
 bmptext(fontGraphics, text, x, y, [colorIndex=0], [align=0]);
 ```
 
 Alpha blending example:
+```JavaScript
+myState.draw = function() {
+	this.paint.setAlpha(0.5); // set alpha level
+	this.paint.rectFill(0, 0, 100, 100, 'red');
+	this.paint.setAlpha(); // restore alpha
+};
+```
 
 Rotation example:
+```JavaScript
+myState.draw = function() {
+	var angle = 45; // angle of rotation
+	var point = [50, 50]; // rotation pivot point
+	this.paint.rotate(angle, point); // rotate at 45 degrees around point 50, 50
+	this.paint.rectFill(0, 0, 100, 100, 'red');
+	// once we are done rotating, we need to restore saved context
+	this.paint.restore();
+};
+```
+
+If you require additional rendering functions, you can extend the renderer.
+
+You can access the global surface's render like so:
+```JavaScript
+myGame.getSurface().render
+```
+
+To add a custom function to renderer:
+```JavaScript
+caya.compose(myGame.getSurface().render, {
+	blueRectangle: function(x, y) {
+		// renders a blue rectangle at x, y
+		// use this.ctx for raw API calls
+		this.ctx.strokeStyle = 'blue';
+		this.ctx.lineWidth = 10;
+		this.ctx.arc(x, y, 20, 0, Math.PI * 2);
+		this.ctx.stroke();
+	}
+});
+
+myState.draw = function() {
+	// we can now use the function in any state
+	this.paint.blueRectangle(20, 20);
+};
+```
+
+In a future version you will also be able to substitute the default renderer with your own.
 
 ### Surface
 
