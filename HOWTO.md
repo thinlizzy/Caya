@@ -396,9 +396,75 @@ myInputHandler.on('release', function(coords) {
 });
 ```
 
-`CAUTION` Note that future versions will add additional functionality which will likely alter the API.
+`CAUTION` The Input class is not state aware, so you are required to bypass events manually when you're not in the correct state. Note that future versions will add additional functionality that will resolve this but will likely alter the API.
 
 ### KeyInput
+
+The KeyInput class handles keyboard events.
+
+To create a handler:
+```JavaScript
+var myKeyboardInputHandler = new caya.KeyInput();
+```
+
+To poll last keyboard event:
+```JavaScript
+var keyEvent = myKeyboardInputHandler.pollEvent();
+```
+
+The return value stored in `keyEvent` will contain two properties, `type` and `keycode` - `type` can correspond to `myKeyboardInputHandler.KEYDOWN` or `myKeyboardInputHandler.KEYUP`, which are just static values representing event type. The `keycode` property contains a value with the corresponding key code.
+
+The keyboard handler conatins key codes for all common keys. You can access them in your handler by the key prefix:
+```JavaScript
+myKeyboardInputHandler.keyEnter
+myKeyboardInputHandler.keyA
+myKeyboardInputHandler.keyB
+myKeyboardInputHandler.key1
+myKeyboardInputHandler.key2
+```
+
+To clear the event queue:
+```JavaScript
+myKeyboardInputHandler.clear();
+```
+
+To check if a keycode is alphanumeric:
+```JavaScript
+myKeyboardInputHandler.isAlphanumeric(keyEvent.keycode);
+```
+
+To convert a key code into a character:
+```JavaScript
+myKeyboardInputHandler.getASCII(keyEvent.keycode);
+```
+
+To check if a given key is in keydown state:
+```JavaScript
+var key = myKeyboardInputHandler.keyEnter; // example
+myKeyboardInputHandler.isKeyDown(key);
+```
+
+The keyboard handler is typically used in the `update` function of some game state thereby binding it to that particular state. Example usage:
+```JavaScript
+myState.update = function(dt) {
+	// fetching keyboard events
+	// loop through keyboard events until there are none left
+	var keyEvent;
+	while (keyEvent = myKeyboardInputHandler.pollEvent()) {
+		if (keyEvent.type === myKeyboardInputHandler.KEYDOWN) {
+			// a keydown event has occured
+			// do something with keyEvent.keycode
+		}
+		else if (keyEvent.type === myKeyboardInputHandler.KEYUP) {
+			// a keyup event has occured
+			// do something with keyEvent.keyup
+		}
+	}
+	// checking individual key states
+	var isKeyWDown = myKeyboardInputHandler.isKeyDown(myKeyboardInputHandler.keyW);
+	var isKeyQDown = myKeyboardInputHandler.isKeyDown(myKeyboardInputHandler.keyQ);
+};
+```
 
 ### AssetLoader
 
