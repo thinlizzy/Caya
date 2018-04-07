@@ -272,7 +272,7 @@ stretchTile(gfxSource, tileX, tileY, sourceWidth, sourceHeight, sourceX, sourceY
 text(text, x, y, [textColor='#fff'], [alignment='left'], [font='11px sans-serif']);
 
 // bitmap text
-bmptext(fontGraphics, text, x, y, [colorIndex=0], [align=0]);
+bmptext(fontObject, text, x, y, [colorIndex=0], [align=0]);
 ```
 
 Alpha blending example:
@@ -646,7 +646,7 @@ myState.update = function(dt) {
 };
 ```
 
-The `run` function is passed the `dt` parameter and reports back whether or not the timer has ticked. Alternatively, you can ignore the return value and check whether the timer has ticked or not by accessing the `ticked` property. You can use `reset` to reset the timer back to initial state:
+The `run` function is passed the `dt` parameter and reports back whether or not the timer has ticked. Alternatively, you can ignore the return value and check whether the timer has ticked or not by accessing the `ticked` property. You can use the `reset` function to reset the timer back to initial state:
 ```JavaScript
 myTimer.reset();
 ```
