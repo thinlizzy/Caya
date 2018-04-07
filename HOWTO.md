@@ -404,44 +404,44 @@ The KeyInput class handles keyboard events.
 
 To create a handler:
 ```JavaScript
-var myKeyboardInputHandler = new caya.KeyInput();
+var myKeyInputHandler = new caya.KeyInput();
 ```
 
 To poll last keyboard event:
 ```JavaScript
-var keyEvent = myKeyboardInputHandler.pollEvent();
+var keyEvent = myKeyInputHandler.pollEvent();
 ```
 
-The return value stored in `keyEvent` will contain two properties, `type` and `keycode` - `type` can correspond to `myKeyboardInputHandler.KEYDOWN` or `myKeyboardInputHandler.KEYUP`, which are just static values representing event type. The `keycode` property contains a value with the corresponding key code.
+The return value stored in `keyEvent` will contain two properties, `type` and `keycode` - `type` can correspond to `myKeyInputHandler.KEYDOWN` or `myKeyInputHandler.KEYUP`, which are just static values representing event type. The `keycode` property contains a value with the corresponding key code.
 
 The keyboard handler conatins key codes for all common keys. You can access them in your handler by the key prefix:
 ```JavaScript
-myKeyboardInputHandler.keyEnter
-myKeyboardInputHandler.keyA
-myKeyboardInputHandler.keyB
-myKeyboardInputHandler.key1
-myKeyboardInputHandler.key2
+myKeyInputHandler.keyEnter
+myKeyInputHandler.keyA
+myKeyInputHandler.keyB
+myKeyInputHandler.key1
+myKeyInputHandler.key2
 ```
 
 To clear the event queue:
 ```JavaScript
-myKeyboardInputHandler.clear();
+myKeyInputHandler.clear();
 ```
 
 To check if a keycode is alphanumeric:
 ```JavaScript
-myKeyboardInputHandler.isAlphanumeric(keyEvent.keycode);
+myKeyInputHandler.isAlphanumeric(keyEvent.keycode);
 ```
 
 To convert a key code into a character:
 ```JavaScript
-myKeyboardInputHandler.getASCII(keyEvent.keycode);
+myKeyInputHandler.getASCII(keyEvent.keycode);
 ```
 
 To check if a given key is in keydown state:
 ```JavaScript
-var key = myKeyboardInputHandler.keyEnter; // example
-myKeyboardInputHandler.isKeyDown(key);
+var key = myKeyInputHandler.keyEnter; // example
+myKeyInputHandler.isKeyDown(key);
 ```
 
 The keyboard handler is typically used in the `update` function of some game state thereby binding it to that particular state. Example usage:
@@ -450,23 +450,137 @@ myState.update = function(dt) {
 	// fetching keyboard events
 	// loop through keyboard events until there are none left
 	var keyEvent;
-	while (keyEvent = myKeyboardInputHandler.pollEvent()) {
-		if (keyEvent.type === myKeyboardInputHandler.KEYDOWN) {
+	while (keyEvent = myKeyInputHandler.pollEvent()) {
+		if (keyEvent.type === myKeyInputHandler.KEYDOWN) {
 			// a keydown event has occured
 			// do something with keyEvent.keycode
 		}
-		else if (keyEvent.type === myKeyboardInputHandler.KEYUP) {
+		else if (keyEvent.type === myKeyInputHandler.KEYUP) {
 			// a keyup event has occured
 			// do something with keyEvent.keyup
 		}
 	}
 	// checking individual key states
-	var isKeyWDown = myKeyboardInputHandler.isKeyDown(myKeyboardInputHandler.keyW);
-	var isKeyQDown = myKeyboardInputHandler.isKeyDown(myKeyboardInputHandler.keyQ);
+	var isKeyWDown = myKeyInputHandler.isKeyDown(myKeyInputHandler.keyW);
+	var isKeyQDown = myKeyInputHandler.isKeyDown(myKeyInputHandler.keyQ);
 };
 ```
 
 ### AssetLoader
+
+The AssetLoader class is used to preload various types of game assets, and provides a way to access them later on.
+
+AssetLoader includes a few default handlers for loading assets. Custom handler functions can be defined to process various types of data. Default handlers can be safely overriden as well.
+
+To create an AssetLoader, use:
+```JavaScript
+var myAssetLoader = new caya.AssetLoader();
+```
+
+You will need a list of assets that point to the files. This list needs to have specific category names that correspond to the appropriate load handler functions. The default handlers are `graphics` for any type of image files, `data` for JSON files and `text` for plaintext files.
+```JavaScript
+var myAssets = {
+	graphics: {
+		player: 'path/to/player.png',
+		monster: 'path/to/monster.png',
+		background: 'path/to/background.jpg'
+	},
+	data: {
+		levels: 'level.json'
+	},
+	text: {
+		story: 'story.txt'
+	}
+};
+```
+
+To preload assets, use the `load` function. Optionally, you can attach a `progress` function to track the load progress:
+```JavaScript
+myAssets.load({
+	assets: myAssets,
+	done: function() {
+		// we are done loading assets!
+		// typically we would run a game here, or continue to the main screen
+	},
+	progress: function(loaded, all) {
+		// track progress
+		console.log('Loaded ' + loaded + ' out of ' + all + ' assets!');
+	}
+});
+```
+
+To retreive assets once they have been loaded, use `get`:
+```JavaScript
+var gfxPlayer = myAssets.get('graphics.player');
+var storyText = myAssets.get('text.story');
+```
+
+To retreive several assets at once:
+```JavaScript
+var gfx = myAssetLoader.get('graphics.player graphics.monster graphics.background');
+// we can now use gfx.player, gfx.monster, gfx.background
+```
+
+You can use `from` to make your life easier:
+```JavaScript
+var gfx = myAssetLoader.from('graphics').get('player monster background');
+var story = myAssetLoader.from('text').get('story');
+```
+
+To define a custom category, add a handler function to the list of handlers:
+```JavaScript
+myAssets.handler.custom = function(filename, ready) {
+	// process file given by filename
+	var object;
+	/* ... */
+	// call ready with the loaded object when done
+	ready(object);
+};
+```
+
+You can now use a custom category:
+```JavaScript
+var myAssets = {
+	custom: {
+		/* keys and filenames */
+	}
+};
+```
+
+This is an example for a sound effect asset handler using [howler.js](https://howlerjs.com/):
+```javascript
+myLoader.handler.sfx = function(filenames, ready) {
+	var sfx = new Howl({
+		src: filenames,
+		autoplay: false,
+		loop: false,
+		volume: 1,
+		onload: function() {
+			// return sfx once everything is loaded
+			ready(sfx);
+		},
+		onloaderror: ready // will return an undefined asset
+	});
+};
+
+var myAssets = {
+	sfx: {
+		foo: ['foo.ogg', 'foo.aac', 'foo.wav'].
+		bar: ['bar.ogg', 'bar.aac', 'bar.wav']
+	}
+};
+
+myLoader.load({
+	assets: myAssets,
+	done: function() {
+		// retreive sfx
+		var sfx_foo = myLoader.get('sfx.foo);
+		var sfx_bar = myLoader.get('sfx.bar');
+		// play foo
+		sfx_foo.play();
+	}
+});
+```
 
 ### Grid2D
 
