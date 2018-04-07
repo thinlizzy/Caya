@@ -115,9 +115,9 @@ Note that we are **not** using `simpleLoop` in the above example. This means tha
 
 Ideally, we would do all of our state calculations in the `update` functions and we would only use `draw` for rendering calls. However, doing some calculations inside `draw` makes the example above simpler since we don't need to bother with defining extra variables. Generally speaking, it's ok to do some calculations on the rendering side of your game as long as you keep all the game logic updates in the `update` function. The purpose of the `update` function is to update the game state to a renewed state, constantly keeping it afresh as it were, and the purpose of the `draw` function is to render whatever state the game is currently in, to the screen.
 
-You should always keep performance in mind when writing any sort of code in either of these functions, as these are being updated in real time (in most cases that means about 60 times per second).
+You should always keep performance in mind when writing any sort of code in either of these functions, as they are being updated in real time (in most cases that means about 60 times per second).
 
-Below is a short summary of classes and functions in Caya. See the [examples](examples/) folder for more examples on usage. See the [doc](doc/) folder for API reference.
+Below is a short summary of classes and functions in Caya. See the [/examples/](examples/) folder for more examples on usage. See the [/doc/](doc/) folder for API reference.
 
 ## Classes
 
@@ -159,15 +159,18 @@ To set view mode:
 ```JavaScript
 // centers canvas element to parent
 myGame.setViewMode('center');
+
 // scales canvas element to parent maintaining a fixed aspect ratio
 myGame.setViewMode('scale-fit');
+
 // scales canvas element to parent fully, ignoring aspect ratio
 myGame.setViewMode('scale-stretch');
+
 // expands canvas element to parent, changing physical diemensions of the canvas
 myGame.setViewMode('expand');
 ```
 
-Changing the view mode effects user input since coordinates must be translated accordingly. This is handled automatically in the Input class.
+Note that changing the view mode effects user input since coordinates must be translated accordingly. This is handled automatically in the Input class.
 
 ### State
 
@@ -370,6 +373,30 @@ mySurface.setDefaultClearMethod();
 ```
 
 ### Input
+
+The Input class is used for handling mouse and touch events. The engine does not differentiate between mouse and touch events, they are treated in an equivalent way.
+
+To instantiate an Input object, you need to associate it with a Game object. Simply pass it as an argument:
+```JavaScript
+var myInputHandler = new caya.Input(myGame);
+```
+
+The input handler only has a single function, `on`. You can use it to register one of three events: press, move or release:
+```JavaScript
+myInputHandler.on('press', function(coords) {
+	// mousedown or touch-start has occured
+	var cx = coords[0]; // event x coordinate
+	var cy = coords[1]; // event y coordinate
+});
+myInputHandler.on('move', function(coords) {
+	// mousemove or touch-move has occured
+});
+myInputHandler.on('release', function(coords) {
+	// mouseup or touch-end has occured
+});
+```
+
+`CAUTION` Note that future versions will add additional functionality which will likely alter the API.
 
 ### KeyInput
 
