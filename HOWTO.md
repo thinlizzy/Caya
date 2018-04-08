@@ -68,7 +68,7 @@ window.addEventListener('load', myGame.run);
 
 That's it! Your first Caya game is complete. If you run it in your browser, you will see a nice red square displayed on your canvas.
 
-A game state represents a single segment of the game, or a screen. You may for example create one state for the game menu, another for the actual game, yet another for story screen, and so on. In the code above, we're using the state's `draw` function to paint to the screen. This function gets called by the Game object whenever this particular state is active. Note the `state: myState` line which informs the engine that we would like `myState` to be the initial state for when the game runs. This argument is needed for the game to run and is not optional. Once running, we may change the game state using `myGame.setState(nextState)`.
+A game state represents a single segment of the game, or a screen. You may for example create one state for the game menu, another for the actual game, yet another for story screen, and so on. In the code above, we're using the state's `draw` function to paint to the screen. This function gets called by the Game object whenever this particular state is active. Note the `state: myState` line which informs the engine that we would like `myState` to be the initial state for when the game runs. This argument is needed for the game to run and is not optional. Once running, we may change the active game state using `myGame.setState(nextState)`.
 
 Note the line that reads `simpleLoop: true`. This informs the engine that we would like to make a game where we don't care for logic updates, we only want to draw to the screen. Defining this flag will make the engine run an alternate game loop that's optimized for this mode. Use it if your game relies on user input to "push" the game forward. You will need to code your own timer and transition functions to support animations in this mode. To avoid entering this mode, simpy skip the definition.
 
@@ -115,17 +115,17 @@ This will display a blue circle orbiting around a central point. Note the `init`
 
 Note that we are **not** using `simpleLoop` in the above example. This means that the engine will call both `update` and `draw` functions on the active game state.
 
-Ideally, we would do all of our state calculations in the `update` functions and we would only use `draw` for rendering calls. However, doing some calculations inside `draw` makes the example above simpler since we don't need to bother with defining extra variables. Generally speaking, it's ok to do some calculations on the rendering side of your game as long as you keep all the game logic updates in the `update` function. The purpose of the `update` function is to update the game state to a renewed state, constantly keeping it afresh as it were, and the purpose of the `draw` function is to render whatever state the game is currently in, to the screen.
+Ideally, we would do all of our state calculations in the `update` function and we would only use `draw` for rendering calls. However, doing some calculations inside `draw` makes the example above simpler since we don't need to bother with defining extra variables. Generally speaking, it's ok to do some calculations on the rendering side of your game as long as you keep all the game logic updates in the `update` function. The purpose of the `update` function is to update the game state to a renewed state, constantly keeping it afresh as it were, and the purpose of the `draw` function is to render whatever state the game is currently in, to the screen. You should always keep performance in mind when writing any sort of code in either of these functions, as they are being updated in real time (in most cases that means about 60 times per second).
 
-You should always keep performance in mind when writing any sort of code in either of these functions, as they are being updated in real time (in most cases that means about 60 times per second).
-
-Below is a short summary of classes and functions in Caya. See the [/examples/](examples/) folder for more examples on usage. See the [/doc/](doc/) folder for API reference.
+See the [/examples/](examples/) folder for more examples on usage. See the [/doc/](doc/) folder for API reference.
 
 ## Classes
 
+Below is a short summary of classes found in Caya and examples on how to use them.
+
 ### Game
 
-The Game class constructs a Game object that exists at the core of a Caya game. It handles initialization and main game loop. It is initialized in the following way:
+The Game class constructs a Game object that exists at the core of a Caya game. It handles initialization and runs the main game loop. It is initialized in the following way:
 
 ```JavaScript
 var myGame = new caya.Game({
@@ -157,7 +157,7 @@ States will initialize automatically when they are first entered into. For cases
 myGame.initStates([state1, state2, ...]);
 ```
 
-To set view mode:
+Caya can let Caya handle the view for your game. To set view mode, use one of the following:
 ```JavaScript
 // centers canvas element to parent
 myGame.setViewMode('center');
@@ -172,7 +172,7 @@ myGame.setViewMode('scale-stretch');
 myGame.setViewMode('expand');
 ```
 
-Note that changing the view mode effects user input since coordinates must be translated accordingly. This is handled automatically in the Input class.
+Note that changing the view mode changes elements' CSS and has an effect on user input since coordinates must be translated accordingly. This is handled automatically by the Input class.
 
 ### State
 
@@ -670,7 +670,7 @@ var myDefaultConfig = {
 var myConfig = new Z9.Configuration(myKey, myDefaultConfig);
 ```
 
-A configuration object acts like any other object and you may populate it with any sort of data. A default configuration serves as a template for your configuration. A `load` call needs to be applied at the start of the game to retreive the active configuration. If none is found within localStorage, the default configuration will be used.
+A configuration object acts like any other object and you may populate it with any sort of data. A default configuration serves as a template for your configuration. A `load` call needs to be applied at the start of the game to retreive the active configuration. If the key is not found within localStorage, the default configuration will be used.
 
 You can control saving and loading using the `save` and `load` functions:
 ```javascript
@@ -697,11 +697,11 @@ Examples on usage can be found in the [/examples/](examples/) folder.
 
 ## Other functions
 
-Listed here are some of the functions included in Caya that may come in handy when developing games:
+Listed here are some additional functions included in Caya that may come in handy when developing games:
 
 ### General purpose
 
-`compose` creates a number of JavaScript objects and creates a single object out of them. This is useful for creating any sort of entity-component systems, as well as extending functionality of objects or simply using it for syntax sugar. It uses Object.assign under the hood or emulates it on non-ES6 compliant browsers.
+`compose` takes a number of JavaScript objects and creates a single object out of them. This is useful for creating any sort of entity-component systems, as well as extending functionality of objects or simply using it for syntax sugar. It uses Object.assign under the hood or emulates it on non-ES6 compliant browsers.
 ```JavaScript
 var result = caya.compose({
 	apples: 10
