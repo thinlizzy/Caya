@@ -430,7 +430,7 @@ To clear the event queue:
 myKeyInputHandler.clear();
 ```
 
-To check if a keycode is alphanumeric:
+To check if a key code is alphanumeric:
 ```JavaScript
 myKeyInputHandler.isAlphanumeric(keyEvent.keycode);
 ```
@@ -498,11 +498,11 @@ var myAssets = {
 
 To preload assets, use the `load` function. Use the `assets` attribute to point to a list of assets you want preloaded. Attach a `done` function to inform you of when all processing is complete. Optionally, you can attach a `progress` function to track the load progress:
 ```JavaScript
-myAssets.load({
+myAssetLoader.load({
 	assets: myAssets,
 	done: function() {
 		// we are done loading assets!
-		// typically we would run a game here, or continue to the main screen
+		// typically we would run the game here, or continue to the main screen
 	},
 	progress: function(loaded, all) {
 		// track progress
@@ -513,8 +513,8 @@ myAssets.load({
 
 To retreive assets once they have been loaded, use the `get` function:
 ```JavaScript
-var gfxPlayer = myAssets.get('graphics.player');
-var storyText = myAssets.get('text.story');
+var gfxPlayer = myAssetLoader.get('graphics.player');
+var storyText = myAssetLoader.get('text.story');
 ```
 
 To retreive several assets at once:
@@ -526,12 +526,12 @@ var gfx = myAssetLoader.get('graphics.player graphics.monster graphics.backgroun
 You can use the `from` function to make your life easier:
 ```JavaScript
 var gfx = myAssetLoader.from('graphics').get('player monster background');
-var story = myAssetLoader.from('text').get('story');
+var storyText = myAssetLoader.from('text').get('story');
 ```
 
 To define a custom category, add a handler function to the list of handlers:
 ```JavaScript
-myAssets.handler.custom = function(filename, ready) {
+myAssetLoader.handler.custom = function(filename, ready) {
 	// process file given by filename
 	var object;
 	/* ... */
@@ -551,7 +551,7 @@ var myAssets = {
 
 This is an example for a sound effect asset handler using [howler.js](https://howlerjs.com/):
 ```javascript
-myLoader.handler.sfx = function(filenames, ready) {
+myAssetLoader.handler.sfx = function(filenames, ready) {
 	var sfx = new Howl({
 		src: filenames,
 		autoplay: false,
@@ -572,12 +572,12 @@ var myAssets = {
 	}
 };
 
-myLoader.load({
+myAssetLoader.load({
 	assets: myAssets,
 	done: function() {
 		// retreive sfx
-		var sfx_foo = myLoader.get('sfx.foo');
-		var sfx_bar = myLoader.get('sfx.bar');
+		var sfx_foo = myAssetLoader.get('sfx.foo');
+		var sfx_bar = myAssetLoader.get('sfx.bar');
 		// play foo
 		sfx_foo.play();
 	}
