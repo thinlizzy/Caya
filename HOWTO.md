@@ -157,7 +157,7 @@ States will initialize automatically when they are first entered into. For cases
 myGame.initStates([state1, state2, ...]);
 ```
 
-Caya can let Caya handle the view for your game. To set view mode, use one of the following:
+Caya can handle the view for your game. To set view mode, use one of the following:
 ```JavaScript
 // centers canvas element to parent
 myGame.setViewMode('center');
