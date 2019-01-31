@@ -13,6 +13,7 @@ myState.init = function() {
 
 // draw the sprite
 myState.draw = function() {
+	this.surface.clear();
 	this.paint.graphics(this.sprite, 140, 90);
 };
 

@@ -118,6 +118,7 @@ myState.init = function() {
 
 // draw some text
 myState.draw = function() {
+	this.surface.clear();
 	this.paint.bmptext(this.font, "Variable Width Bitmap Text!", 20, 20);
 	this.paint.bmptext(this.font, "I am center aligned", 200, 60, 0, 1);
 	this.paint.bmptext(this.font, "I am right aligned", 380, 100, 0, 2);

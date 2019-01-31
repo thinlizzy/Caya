@@ -16,6 +16,7 @@ myState.init = function() {
 
 // draw some text
 myState.draw = function() {
+	this.surface.clear();
 	this.paint.bmptext(this.font, "Hello World", 20, 20);
 	this.paint.bmptext(this.font, "Bitmap Text", 20, 50);
 	this.paint.bmptext(this.font, "A t r a e  o o s", 20, 80, 1);

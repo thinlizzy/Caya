@@ -60,6 +60,7 @@ myState.init = function() {
 
 // draw the sprite
 myState.draw = function() {
+	this.surface.clear();
 	var n_boxes = this.boxes.length;
 	for (var i = 0; i < n_boxes; i++) {
 		this.boxes[i].draw();

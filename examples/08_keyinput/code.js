@@ -28,6 +28,7 @@ myState.init = function() {
 
 // draw the screen
 myState.draw = function() {
+	this.surface.clear();
 	this.paint.text('Type something!', 10, 12, '#00f', 'left', '15px Arial');
 	this.paint.rectFill(10, 40, 380, 1, '#00f');
 	var displayText = this.strBuff;

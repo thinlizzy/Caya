@@ -17,6 +17,7 @@ function DraggableSquare(state) {
 
 	// draw the square
 	this.draw = function() {
+		state.surface.clear();
 		state.paint.rectFill(x, y, size, size, color);
 	};
 

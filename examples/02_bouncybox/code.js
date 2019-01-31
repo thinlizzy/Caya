@@ -21,6 +21,7 @@ function BouncyBox(state, options) {
 
 	this.draw = function() {
 		// we have access to state's paint
+		state.surface.clear();
 		state.paint.rectFill(pos.x, pos.y, 50, 50, options.color);
 	};
 }
