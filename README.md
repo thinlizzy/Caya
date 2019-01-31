@@ -28,6 +28,7 @@ var myState = new caya.State();
 
 // draw some shapes
 myState.draw = function() {
+	this.surface.clear();
 	this.paint.rectFill(10, 10, 50, 20, 'red');
 	this.paint.circleFill(100, 30, 20, 'blue');
 };

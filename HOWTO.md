@@ -51,6 +51,8 @@ var myState = new caya.State();
 
 // state draw function
 myState.draw = function() {
+	// clear the surface
+	this.surface.clear();
 	// draw a red square
 	this.paint.rectFill(10, 10, 50, 50, 'red');
 };
@@ -87,6 +89,8 @@ myState.init = function() {
 
 // state draw function
 myState.draw = function() {
+	// clear the surface
+	this.surface.clear();
 	// draw a blue circle
 	var circle_x = 50 * Math.cos(this.rotation) + 200;
 	var circle_y = 50 * Math.sin(this.rotation) + 200;
@@ -280,6 +284,7 @@ bmptext(fontObject, text, x, y, [colorIndex=0], [align=0]);
 Alpha blending example:
 ```JavaScript
 myState.draw = function() {
+	this.surface.clear();
 	this.paint.setAlpha(0.5); // set alpha level
 	this.paint.rectFill(0, 0, 100, 100, 'red');
 	this.paint.setAlpha(); // restore alpha
@@ -289,6 +294,7 @@ myState.draw = function() {
 Rotation example:
 ```JavaScript
 myState.draw = function() {
+	this.surface.clear();
 	var angle = 45; // angle of rotation
 	var point = [50, 50]; // rotation pivot point
 	this.paint.rotate(angle, point); // rotate at 45 degrees around point 50, 50
@@ -320,6 +326,7 @@ caya.compose(myGame.getSurface().render, {
 
 myState.draw = function() {
 	// we can now use the function in any state
+	this.surface.clear();
 	this.paint.blueCircle(20, 20);
 };
 ```
@@ -636,6 +643,7 @@ myState.init = function() {
 };
 
 myState.draw = function() {
+	this.surface.clear();
 	if (this.showRectangle) {
 		this.paint.rectFill(20, 20, 100, 100, 'purple');
 	}
