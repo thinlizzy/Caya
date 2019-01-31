@@ -1,8 +1,8 @@
 /*
- * Caya 0.1.2
+ * Caya 0.1.3
  * Tiny HTML5 game engine
  *
- * (c) 2018 Danijel Durakovic
+ * (c) 2019 Danijel Durakovic
  * MIT License
  */
 
@@ -11,9 +11,9 @@
 
 /**
  * @file Caya
- * @version 0.1.2
+ * @version 0.1.3
  * @author Danijel Durakovic
- * @copyright 2018
+ * @copyright 2019
  */
 
 "use strict";

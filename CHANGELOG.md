@@ -1,3 +1,6 @@
+## 0.1.3 (January 31, 2019)
+- `FEATURE` Moved surface clearing from library to user side.
+
 ## 0.1.2 (April 1, 2018)
 - `FEATURE` Changed how assets are processed and retreived in `AssetLoader` - `get` now understands categories. Added `from` function for easier asset retreival and removed obsolete `acquire` function.
 

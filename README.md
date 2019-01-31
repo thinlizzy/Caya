@@ -4,7 +4,7 @@ Caya is a lightweight HTML5 game development toolkit intended for basic 2D game 
 
 **Very early version.** Use at your own risk! :)
 
-Version 0.1.2
+Version 0.1.3
 
 ## Features
 
@@ -60,6 +60,6 @@ window.addEventListener('load', myGame.run);
 
 ## License
 
-Copyright (c) 2018 Danijel Durakovic
+Copyright (c) 2019 Danijel Durakovic
 
 MIT License
