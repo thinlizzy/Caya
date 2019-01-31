@@ -446,7 +446,9 @@ var key = myKeyInputHandler.keyEnter; // example
 myKeyInputHandler.isKeyDown(key);
 ```
 
-The keyboard handler is typically used in the `update` function of some game state thereby binding it to that particular state. Example usage:
+The keyboard handler is typically used in the `update` function of some game state thereby binding it to that particular state.
+
+Example usage:
 ```JavaScript
 myState.update = function(dt) {
 	// fetching keyboard events
@@ -459,7 +461,7 @@ myState.update = function(dt) {
 		}
 		else if (keyEvent.type === myKeyInputHandler.KEYUP) {
 			// a keyup event has occured
-			// do something with keyEvent.keyup
+			// do something with keyEvent.keycode
 		}
 	}
 	// checking individual key states
