@@ -1449,13 +1449,11 @@ caya.Game = function(options) {
 			state.update(timestep * framerate / 1000);
 			acc -= timestep;
 		}
-		///surface.clear();
 		state.draw();
 	}
 
 	function simpleMainLoop() {
 		requestAnimationFrame(simpleMainLoop);
-		///surface.clear();
 		state.draw();
 	}
 
