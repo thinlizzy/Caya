@@ -1,5 +1,5 @@
 /*
- * Caya 0.1.3
+ * Caya 0.1.3d
  * Tiny HTML5 game engine
  *
  * (c) 2019 Danijel Durakovic
@@ -11,7 +11,7 @@
 
 /**
  * @file Caya
- * @version 0.1.3
+ * @version 0.1.3d
  * @author Danijel Durakovic
  * @copyright 2019
  */
@@ -651,22 +651,22 @@ caya.Input = function(game) {
 
 	// attach listeners
 	element.addEventListener('mousedown', function(e) {
-		mouseHandler(cb.press, e, MOUSE);
+		mouseHandler(cb.press, e);
 	});
 	element.addEventListener('touchstart', function(e) {
-		touchHandler(cb.press, e, TOUCH);
+		touchHandler(cb.press, e);
 	});
 	window.addEventListener('mousemove', function(e) {
-		mouseMoveHandler(cb.move, e, MOUSE);
+		mouseMoveHandler(cb.move, e);
 	});
 	window.addEventListener('touchmove', function(e) {
-		touchHandler(cb.move, e, TOUCH);
+		touchHandler(cb.move, e);
 	});
 	window.addEventListener('mouseup', function(e) {
-		mouseHandler(cb.release, e, MOUSE);
+		mouseHandler(cb.release, e);
 	});
 	window.addEventListener('touchend', function(e) {
-		touchHandler(cb.release, e, TOUCH);
+		touchHandler(cb.release, e);
 	});
 
 	/**
