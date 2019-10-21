@@ -54,7 +54,7 @@ myState.draw = function() {
 };
 
 // update game
-myState.update = function(dt) {
+myState.update = function() {
 	// intercept key events
 	var keyEvent;
 	while (keyEvent = keyInputHandler.pollEvent()) {
@@ -62,7 +62,7 @@ myState.update = function(dt) {
 		if (type === keyInputHandler.KEYDOWN) {
 			var keycode = keyEvent.keycode;
 			if (keyInputHandler.isAlphanumeric(keycode)) {
-				var ascii = keyInputHandler.getASCII(keycode);
+				var ascii = keyInputHandler.getCharacter(keycode);
 				var character;
 				if (keyInputHandler.isKeyDown(keyInputHandler.keyShift)) {
 					character = ascii;
@@ -100,9 +100,9 @@ myState.update = function(dt) {
 	this.keyStates.ctrl = keyInputHandler.isKeyDown(keyInputHandler.keyControl);
 	this.keyStates.shift = keyInputHandler.isKeyDown(keyInputHandler.keyShift);
 	this.keyStates.alt = keyInputHandler.isKeyDown(keyInputHandler.keyAlt);
-	this.keyStates.enter = keyInputHandler.isKeyDown(keyInputHandler.keyReturn);
+	this.keyStates.enter = keyInputHandler.isKeyDown(keyInputHandler.keyEnter);
 	// run the blinking timer
-	if (this.blinkTimer.run(dt))
+	if (this.blinkTimer.run())
 		this.showCaret = !this.showCaret; // flip caret state
 };
 

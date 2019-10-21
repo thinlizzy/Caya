@@ -20,6 +20,7 @@ myState.draw = function() {
 	this.paint.rect(50, 70, 70, 30, 'orange'); // shorthand method
 	this.paint.circleFill(200, 120, 50, 'blue');
 	this.paint.rectFill(290, 170, 60, 100, '#e2f');
+	this.paint.line(50, 150, 90, 150, 'red', 2);
 };
 
 // setup game

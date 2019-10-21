@@ -1,9 +1,10 @@
 /*
- * Caya 0.1.3d
+ * Caya
  * Tiny HTML5 game engine
  *
  * (c) 2019 Danijel Durakovic
  * MIT License
+ * 
  */
 
 /*jshint globalstrict:true*/
@@ -11,7 +12,7 @@
 
 /**
  * @file Caya
- * @version 0.1.3d
+ * @version 0.2.0
  * @author Danijel Durakovic
  * @copyright 2019
  */
@@ -91,7 +92,7 @@ caya.clamp = function(number, min, max) {
 };
 
 /**
- * Returns a random integer in range.
+ * Returns a random integer in range (inclusive).
  *
  * @param {number} min - Lower range boundary.
  * @param {number} max - Upper range boundary.
@@ -100,6 +101,15 @@ caya.clamp = function(number, min, max) {
  */
 caya.getRandomInt = function(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+/**
+ * Returns the result of a coin flip.
+ *
+ * @returns {bool}
+ */
+caya.coinFlip = function() {
+	return 1 == Math.floor(Math.random() * 2);
 };
 
 /**
@@ -134,8 +144,8 @@ caya.choose = function(list) {
 /**
  * Checks whether a point resides within a given rectangle.
  *
- * @param {number} x - Point x of coordinate.
- * @param {number} y - Point y of coordinate.
+ * @param {number} x - Point x coordinate.
+ * @param {number} y - Point y coordinate.
  * @param {number} rx - Rectangle x coordinate.
  * @param {number} ry - Rectangle y coordinate.
  * @param {number} rw - Rectangle width.
@@ -145,6 +155,21 @@ caya.choose = function(list) {
  */
 caya.pointInRect = function(x, y, rx, ry, rw, rh) {
 	return x >= rx && x < rx + rw && y >= ry && y < ry + rh;
+};
+
+/**
+ * Checks whether a point resides within a given circle.
+ *
+ * @param {number} x - Point x coordinate.
+ * @param {number} y - Point y coordinate.
+ * @param {number} cx - Circle x center coordinate.
+ * @param {number} cy - Circle y center coordinate.
+ * @param {number} radius - Circle radius.
+ *
+ * @returns {bool}
+ */
+caya.pointInCircle = function(x, y, cx, cy, radius) {
+	return Math.pow(x - cx, 2) + Math.pow(y - cy, 2) < Math.pow(radius, 2);
 };
 
 /**
@@ -163,8 +188,8 @@ caya.iter = function(object, callback) {
 };
 /**
  * @callback iterCallback
- * @param {string} key
- * @param {object} item
+ * @param {string} key - Item's key.
+ * @param {object} item - The item itself.
  */
 
 /**
@@ -199,6 +224,7 @@ caya.Grid2D = function(w, h, defaultValue) {
 	this.width = w;
 	this.height = h;
 	this.data = new Array(w * h);
+	defaultValue = (defaultValue === undefined) ? 0 : defaultValue;
 
 	/**
 	 * Fills the grid with default values.
@@ -241,7 +267,10 @@ caya.Grid2D = function(w, h, defaultValue) {
  */
 caya.Timer = function(interval) {
 	interval = interval || 1;
-	var acc = 0;
+	if (interval < 1) {
+		interval = 1;
+	}
+	var accumulator = 0;
 	/**
 	 * Indicates whether the timer has ticked or not.
 	 *
@@ -257,10 +286,10 @@ caya.Timer = function(interval) {
 	 *
 	 * @returns {bool}
 	 */
-	this.run = function(delta) {
-		acc += delta;
-		if (acc >= interval) {
-			acc -= interval;
+	this.run = function() {
+		accumulator += 1;
+		if (accumulator >= interval) {
+			accumulator -= interval;
 			this.ticked = true;
 			return true;
 		}
@@ -271,7 +300,7 @@ caya.Timer = function(interval) {
 	 * Resets the timer.
 	 */
 	this.reset = function() {
-		acc = 0;
+		accumulator = 0;
 		this.ticked = false;
 	};
 };
@@ -369,7 +398,7 @@ caya.AssetLoader = function() {
 	 */
 
 	/**
-	 * Loads a list of assets. Iterates over categories in the list and then calls
+	 * Loads assets from an asset list. Iterates over categories in the list and then calls
 	 * the appropriate load handler on every item in the category.
 	 *
 	 * @param {object} options
@@ -447,7 +476,7 @@ caya.AssetLoader = function() {
 	 * loader.get('category.key');
 	 * // retreive multiple assets, result is an object of objects: {key1: data, key2: data}
 	 * loader.get('category.key1', 'category.key2');
-	 * // alternative syntax
+	 * // alternative syntaxes
 	 * loader.get('category.key1, category.key2');
 	 * loader.get('category.key1 category.key2');
 	 */
@@ -538,7 +567,7 @@ caya.AssetLoader = function() {
 	 * // alternative syntax
 	 * loader.from('category').get('key1, key2');
 	 * loader.from('category').get('key1 key2');
-	 */	
+	 */
 	this.from = function(category) {
 		if (typeof category === 'string') {
 			return new FromObject(bank[category.trim()]);
@@ -616,7 +645,12 @@ caya.Input = function(game) {
 		// dispatch
 		var i = callbackList.length;
 		while (i--) {
-			callbackList[i](coords);
+			var cbObj = callbackList[i];
+			var cbFunc = cbObj[0];
+			var cbState = cbObj[1];
+			if (!cbState || cbState._active) {
+				cbFunc(coords);
+			}
 		}
 		return false;
 	}
@@ -629,7 +663,12 @@ caya.Input = function(game) {
 		// dispatch
 		var i = callbackList.length;
 		while (i--) {
-			callbackList[i](coords);
+			var cbObj = callbackList[i];
+			var cbFunc = cbObj[0];
+			var cbState = cbObj[1];
+			if (!cbState || cbState._active) {
+				cbFunc(coords);
+			}
 		}
 		return false;
 	}
@@ -644,7 +683,12 @@ caya.Input = function(game) {
 		// dispatch
 		var i = callbackList.length;
 		while (i--) {
-			callbackList[i](coords);
+			var cbObj = callbackList[i];
+			var cbFunc = cbObj[0];
+			var cbState = cbObj[1];
+			if (!cbState || cbState._active) {
+				cbFunc(coords);
+			}
 		}
 		return false;
 	}
@@ -670,18 +714,64 @@ caya.Input = function(game) {
 	});
 
 	/**
+	 * A Bind object used to associate events with states.
+	 */
+	function BindObject(cbRef) {
+		this.bindTo = function(state) {
+			if (state) {
+				cbRef[1] = state;
+			}
+		};
+	}
+
+	/**
 	 * Registers an event.
 	 *
 	 * @param {string} eventType - Type of event to register: press, move or release.
 	 * @param {inputEventCallback} callback - Event callback.
+	 * @param {string} [id] - Event id.
+	 *
+	 * @returns {object} - BindObject
 	 */
-	this.on = function(eventType, callback) {
-		cb[eventType].push(callback);
+	this.on = function(eventType, callback, id) {
+		var callbackList = cb[eventType];
+		var cbRef = [callback, C_NULL, id];
+		callbackList.push(cbRef);
+		return new BindObject(cbRef);
 	};
 	/**
 	 * @callback inputEventCallback
 	 * @param {array} coordinates - Event coordinates.
 	 */
+
+	/**
+	 * Deregisters an event.
+	 *
+	 * @param {string} [eventType] - Type of event to unregister: press, move or release.
+	 * @param {string} [id] - Event id. If omitted, all events of named type will be removed.
+	 */
+	this.off = function(eventType, id) {
+		if (!eventType && !id) {
+			cb = { press: [], move: [], release: [] };
+		}
+		else if (!id) {
+			cb[eventType] = [];
+		}
+		else {
+			var callbackList = cb[eventType];
+			if (!callbackList) {
+				return;
+			}
+			var i = callbackList.length;
+			while (i--) {
+				var cbObj = callbackList[i];
+				var cbId = cbObj[2];
+				if (cbId === id) {
+					callbackList.splice(i, 1);
+				}
+			}
+		}
+	};
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -735,7 +825,7 @@ caya.KeyInput = function() {
 		}
 	});
 	window.onblur = function() {
-		// clear event queue and key buffer so we don't end up with dangling events
+		// clear event queue and key buffer on defocus so we don't end up with dangling events
 		eventQueue = [];
 		keyBuffer = [];
 	};
@@ -751,11 +841,16 @@ caya.KeyInput = function() {
 	/**
 	 * Poll a single keyboard event from the queue.
 	 *
-	 * @return {object}
+	 * @return {keyboardEvent}
 	 */
 	this.pollEvent = function() {
 		return eventQueue.shift();
 	};
+	/**
+	 * @typedef {object} keyboardEvent
+	 * @property {number} type - Either a KeyInput.KEYDOWN or a KeyInput.KEYUP.
+	 * @property {number} keycode
+	 */
 
 	/**
 	 * Checks if a keycode is alphanumeric.
@@ -773,7 +868,7 @@ caya.KeyInput = function() {
 	 *
 	 * @returns {string}
 	 */
-	this.getASCII = function(keycode) {
+	this.getCharacter = function(keycode) {
 		return String.fromCharCode(keycode);
 	};
 
@@ -791,7 +886,7 @@ caya.KeyInput = function() {
 
 	// keycodes
 	this.keyCancel = 3; this.keyHelp = 6; this.keyBackspace = 8; this.keyTab = 9; this.keyClear = 12;
-	this.keyReturn = 13; this.keyEnter = 14; this.keyShift = 16; this.keyControl = 17; this.keyAlt = 18;
+	this.keyEnter = 13; this.keyReturn = 14; this.keyShift = 16; this.keyControl = 17; this.keyAlt = 18;
 	this.keyPause = 19; this.keyCapsLock = 20; this.keyEscape = 27; this.keySpace = 32; this.keyPageUp = 33;
 	this.keyPageDown = 34; this.keyEnd = 35; this.keyHome = 36; this.keyLeft = 37; this.keyUp = 38;
 	this.keyRight = 39; this.keyDown = 40; this.keyPrintscreen = 44; this.keyInsert = 45; this.keyDelete = 46;
@@ -910,10 +1005,31 @@ caya.Render = function(ctx) {
 	};
 
 	/**
+	 * Renders a line.
+	 *
+	 * @param {number} x1 - Line x1 coordinate.
+	 * @param {number} y1 - Line y1 coordinate.
+	 * @param {number} x2 - Line x2 coordinate.
+	 * @param {number} y2 - Line y2 coordinate.
+	 * @param {string} [color="#fff"] - Line color.
+	 * @param {number} [width=1] - Line width.
+	 */
+	this.line = function(x1, y1, x2, y2, color, width) {	
+		color = (color === undefined) ? '#fff' : color;
+		width = (width === undefined) ? 1 : width;
+		ctx.strokeStyle = color;
+		ctx.lineWidth = width;
+		ctx.beginPath();
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		ctx.stroke();
+	};
+
+	/**
 	 * Renders a rectangle.
 	 *
-	 * @param {number} x - Rectangle x position.
-	 * @param {number} y - Rectangle y position.
+	 * @param {number} x - Rectangle x coordinate.
+	 * @param {number} y - Rectangle y coordinate.
 	 * @param {number} w - Rectangle width.
 	 * @param {number} h - Rectangle height.
 	 * @param {string} [color="#fff"] - Rectangle line color.
@@ -930,8 +1046,8 @@ caya.Render = function(ctx) {
 	/**
 	 * Renders a filled rectangle.
 	 *
-	 * @param {number} x - Rectangle x position.
-	 * @param {number} y - Rectangle y position.
+	 * @param {number} x - Rectangle x coordinate.
+	 * @param {number} y - Rectangle y coordinate.
 	 * @param {number} w - Rectangle width.
 	 * @param {number} h - Rectangle height.
 	 * @param {string} [color="#fff"] - Rectangle fill color.
@@ -945,8 +1061,8 @@ caya.Render = function(ctx) {
 	/**
 	 * Renders an arc.
 	 *
-	 * @param {number} x - Arc x position.
-	 * @param {number} y - Arc y position.
+	 * @param {number} x - Arc x coordinate.
+	 * @param {number} y - Arc y coordinate.
 	 * @param {number} rad - Arc radius.
 	 * @param {number} start - Arc start angle.
 	 * @param {number} end - Arc end angle.
@@ -965,8 +1081,8 @@ caya.Render = function(ctx) {
 	/**
 	 * Renders a circle.
 	 *
-	 * @param {number} x - Circle x position.
-	 * @param {number} y - Circle y position.
+	 * @param {number} x - Circle x center coordinate.
+	 * @param {number} y - Circle y center coordinate.
 	 * @param {number} rad - Circle radius.
 	 * @param {string} [color="#fff"] - Circle line color.
 	 * @param {number} [width=1] - Circle line width.
@@ -983,8 +1099,8 @@ caya.Render = function(ctx) {
 	/**
 	 * Renders a filled circle.
 	 *
-	 * @param {number} x - Circle x position.
-	 * @param {number} y - Circle y position.
+	 * @param {number} x - Circle x coordinate.
+	 * @param {number} y - Circle y coordinate.
 	 * @param {number} rad - Circle radius.
 	 * @param {string} [color="#fff"] - Circle fill color.
 	 */
@@ -1022,8 +1138,8 @@ caya.Render = function(ctx) {
 	 * Renders graphics.
 	 *
 	 * @param {object} gfx - Source graphics.
-	 * @param {number} x - Graphics x position.
-	 * @param {number} y - Graphics y position.
+	 * @param {number} x - Graphics x coordinate.
+	 * @param {number} y - Graphics y coordinate.
 	 * @param {number} [w] - Graphics width.
 	 * @param {number} [h] - Graphics height.
 	 */
@@ -1040,8 +1156,8 @@ caya.Render = function(ctx) {
 	 * Renders a surface.
 	 *
 	 * @param {object} surface - Surface object
-	 * @param {number} x - Destination x position.
-	 * @param {number} y - Destination y position.
+	 * @param {number} x - Destination x coordinate.
+	 * @param {number} y - Destination y coordinate.
 	 */
 	this.surface = function(surface, x, y) {
 		ctx.drawImage(surface.canvas, x, y);
@@ -1051,12 +1167,12 @@ caya.Render = function(ctx) {
 	 * Renders a tile from a tileset.
 	 *
 	 * @param {object} gfx - Source graphics.
-	 * @param {number} x - Tile x position.
-	 * @param {number} y - Tile y position.
+	 * @param {number} x - Tile x coordinate.
+	 * @param {number} y - Tile y coordinate.
 	 * @param {number} w - Tile width.
 	 * @param {number} h - Tile height.
-	 * @param {number} sx - Source x position.
-	 * @param {number} sy - Source y position.
+	 * @param {number} sx - Source x coordinate.
+	 * @param {number} sy - Source y coordinate.
 	 */
 	this.tile = function(gfx, x, y, w, h, sx, sy) {
 		ctx.drawImage(gfx, sx, sy, w, h, x, y, w, h);
@@ -1066,12 +1182,12 @@ caya.Render = function(ctx) {
 	 * Renders a stretched tile from a tileset.
 	 *
 	 * @param {object} gfx - Source graphics.
-	 * @param {number} x - Tile x position.
-	 * @param {number} y - Tile y position.
+	 * @param {number} x - Tile x coordinate.
+	 * @param {number} y - Tile y coordinate.
 	 * @param {number} sw - Source width.
 	 * @param {number} sh - Source height.
-	 * @param {number} sx - Source x position.
-	 * @param {number} sy - Source y position.
+	 * @param {number} sx - Source x coordinate.
+	 * @param {number} sy - Source y coordinate.
 	 * @param {number} w - Tile width.
 	 * @param {number} h - Tile height.
 	 */
@@ -1084,8 +1200,8 @@ caya.Render = function(ctx) {
 	 * Pre-render texts onto surfaces whenever possible.
 	 *
 	 * @param {string} text - Text to display.
-	 * @param {number} x - Text x position.
-	 * @param {number} y - Text y position.
+	 * @param {number} x - Text x coordinate.
+	 * @param {number} y - Text y coordinate.
 	 * @param {string} [color=#000] - Color code.
 	 * @param {string} [alignment=left] - Text alignment: left, center or right.
 	 * @param {string} [font=11px sans-serif] - Font to use.
@@ -1106,8 +1222,8 @@ caya.Render = function(ctx) {
 	 *
 	 * @param {caya.Font} font - Bitmap font.
 	 * @param {string} text - Text to display.
-	 * @param {number} x - Text x position.
-	 * @param {number} y - Text y position.
+	 * @param {number} x - Text x coordinate.
+	 * @param {number} y - Text y coordinate.
 	 * @param {number} [color=0] - Color index.
 	 * @param {number} [align=0] - Align left: 0, right: 1, or center: 2.
 	 */
@@ -1370,8 +1486,10 @@ caya.State = function(options) {
 			this._initialized = true;
 			this.surface = surface;
 			this.paint = surface.render;
+			this.init();
 		}
 	};
+	this._active = false;
 	/**
 	 * Global surface.
 	 *
@@ -1386,6 +1504,16 @@ caya.State = function(options) {
 	 * @type {caya.Render}
 	 */
 	this.paint = C_NULL;
+
+	/**
+	 * Retreives state active state. Only one state may be active at any given time.
+	 *
+	 * @returns {bool}
+	 */
+	this.isActive = function() {
+		return this._active;
+	};
+
 	// user functions
 	this.init   = options.init   || C_EMPTYF;
 	this.enter  = options.enter  || C_EMPTYF;
@@ -1413,13 +1541,12 @@ caya.State = function(options) {
  * @param {boolean} [options.simpleLoop=false] - When set to true, a simple main loop
  *   will be used. This is an alternative version of the core game loop that only does
  *   drawing, and leaves updates to the programmer. Use this if your game does not require
- *   timed events and relies on user events.
- * @param {number} [options.fps=60] - Game FPS (void when simpleLoop=true).
+ *   timed events and relies on user input to push the game state forward.
  * @param {number} [options.framerate=60] - Game frame rate (void when simpleLoop=true).
  * @param {array} [options.gameStates] - List of states to be initialized upon game run.
  *   If states are left uninitialized, they will initialize once as they activate for the
  *   first time. You can safely omit this argument if your states can load independently.
- *   Use initStates() to initialize states manually.
+ *   Alternatively, use initStates() to initialize states manually.
  */
 caya.Game = function(options) {
 	var self = this;
@@ -1432,29 +1559,33 @@ caya.Game = function(options) {
 	var canvasOwner;
 
 	// main loop variables
-	var fps = 60, framerate = 60;
-	var last = 0, delta = 0, acc = 0;
-	var timestep;
+	var currentTime = Date.now() / 1000;
+	var accumulator = 0;
+	var framerate = 60;
+	var tickRate = 1 / framerate;
 
 	//
-	// mainloop variants
+	// main loop variants
 	//
-
 	function mainLoop(time) {
-		requestAnimationFrame(mainLoop);
-		delta = time - last;
-		last = time;
-		acc += delta;
-		while (acc >= timestep) {
-			state.update(timestep * framerate / 1000);
-			acc -= timestep;
+		var timeNow = Date.now() / 1000;
+		var frameTime = timeNow - currentTime;
+		if (frameTime > 0.25) {
+			frameTime = 0.25;
 		}
-		state.draw();
+		currentTime = timeNow;
+		accumulator += frameTime;
+		while (accumulator >= tickRate) {
+			state.update();
+			accumulator -= tickRate;
+			state.draw();
+		}	
+		requestAnimationFrame(mainLoop);
 	}
 
 	function simpleMainLoop() {
-		requestAnimationFrame(simpleMainLoop);
 		state.draw();
+		requestAnimationFrame(simpleMainLoop);
 	}
 
 	//
@@ -1544,13 +1675,14 @@ caya.Game = function(options) {
 	 */
 	this.setState = function(next) {
 		if (state) {
+			state._active = false;
 			state.exit();
 		}
 		state = next;
 		if (!state._initialized) {
 			state._initState(surface);
-			state.init();
 		}
+		state._active = true;
 		state.enter();
 	};
 
@@ -1575,7 +1707,7 @@ caya.Game = function(options) {
 	/**
 	 * Initializes game states. Skips already initialized states.
 	 *
-	 * @param {array} states - A list of states ready to be initialized.
+	 * @param {array} states - A list of states to be initialized.
 	 *
 	 */
 	this.initStates = function(states) {
@@ -1584,7 +1716,6 @@ caya.Game = function(options) {
 			var game_state = states[i];
 			if (!game_state._initialized) {
 				game_state._initState(surface);
-				game_state.init();
 			}
 		}
 	};
@@ -1598,23 +1729,25 @@ caya.Game = function(options) {
 			var n_states = options.gameStates.length;
 			for (var i = 0; i < n_states; i++) {
 				var game_state = options.gameStates[i];
-				game_state._initState(surface);
-				game_state.init();
+				if (!game_state._initialized) {
+					game_state._initState(surface);
+				}
 			}
 		}
 		// set initial game state
 		self.setState(options.state);
 		// enter main loop
 		if (options.simpleLoop) {
-			// enter simple loop with no update function
+			// enter simple loop
 			requestAnimationFrame(simpleMainLoop);
 		}
 		else {
 			// setup main loop
-			fps = options.fps || fps;
-			framerate = options.framerate || framerate;
-			timestep = 1000 / fps;
-			// enter regular loop with the update function
+			if (options.framerate) {
+				framerate = options.framerate;
+				tickRate = 1 / framerate;
+			}
+			// enter normal loop
 			requestAnimationFrame(mainLoop);
 		}
 	};

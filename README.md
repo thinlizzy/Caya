@@ -1,19 +1,17 @@
 ![Caya](/logo.png?raw=true)
 
-Caya is a lightweight HTML5 game development toolkit intended for basic 2D game development.
+Caya is a lightweight HTML5 game development toolkit intended for 2D game development.
 
-**Very early version.** Use at your own risk! :)
-
-Version 0.1.3
+Version 0.2.0
 
 ## Features
 
-- Single file (minified: 13KB) with zero external dependencies
+- Single file (minified: 14KB) with zero external dependencies
 - Supports all modern browsers (IE11/Edge/Firefox/Opera/Chrome/Safari)
 - Easy to use API - most features are simple, reusable classes
 - State based
 - Asset management
-- Keyboard and touch input
+- Keyboard and mouse or touch input
 - [And much more! :)](HOWTO.md)
 
 ## Reference and Quick start guide
@@ -46,14 +44,13 @@ window.addEventListener('load', myGame.run);
 
 ## Future plans
 
-- State-aware input handling (planned for 0.2.0)
 - More general math, geometry, randomness related functions
-- More general purpose useful classes (animation manager, spatial data structures, ...)
+- More general purpose classes (animations, tweening, game-specific data structures, ...)
 - More render functions
 - Utils (caya.UI, caya.level, ...)
-- More demos!
+- More demos
 
-## Thanks
+## Credits
 
 - [howler.js](https://howlerjs.com/) - awesome audio library used in some examples and demos
 - [QUnit](https://qunitjs.com/) - unit testing framework

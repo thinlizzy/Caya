@@ -10,10 +10,10 @@ function BouncyBox(state, options) {
 	var vel = { x: options.vel_x, y: options.vel_y };
 	var size = options.size;
 
-	this.animate = function(delta) {
+	this.animate = function() {
 		// bounce the box around
-		pos.x += vel.x * delta;
-		pos.y += vel.y * delta;
+		pos.x += vel.x;
+		pos.y += vel.y;
 		var max_x = state.surface.width - size;
 		var max_y = state.surface.height - size;
 		if (pos.x >= max_x) {
@@ -67,10 +67,10 @@ myState.draw = function() {
 	}
 };
 
-myState.update = function(delta) {
+myState.update = function() {
 	var n_boxes = this.boxes.length;
 	for (var i = 0; i < n_boxes; i++) {
-		this.boxes[i].animate(delta);
+		this.boxes[i].animate();
 	}
 };
 

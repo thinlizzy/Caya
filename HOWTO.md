@@ -24,17 +24,17 @@
 
 This library provides a collection of classes and functions that aim to simplify some of the heavy-lifting involved in implementing simple 2D games using HTML5. It aims to be lightweight and provide a clear API that's both powerful and easy to use, and lets you focus on game logic instead of working with all the technical details behind the scenes.
 
-This engine is still in ongoing development. The release version is stable but the API may change in future releases.
+This engine is still in ongoing development. The release version is stable, but API may change in future releases.
 
 ## Quick start guide
 
-To get started, create a HTML file with your favorite HTML5 template and add a canvas element to it:
+To get started, create a HTML file with your favorite HTML5 template and add a canvas element of desired dimensions to it:
 
 ```HTML
 <canvas id="myCanvasID" width="500" height="400"></canvas>
 ```
 
-Include Caya and the associated scripts for your game to the HTML:
+Add Caya and the associated scripts for your game to the HTML:
 
 ```HTML
 <script src="path/to/caya.min.js"></script>
@@ -70,7 +70,9 @@ window.addEventListener('load', myGame.run);
 
 That's it! Your first Caya game is complete. If you run it in your browser, you will see a nice red square displayed on your canvas.
 
-A game state represents a single segment of the game, or a screen. You may for example create one state for the game menu, another for the actual game, yet another for story screen, and so on. In the code above, we're using the state's `draw` function to paint to the screen. This function gets called by the Game object whenever this particular state is active. Note the `state: myState` line which informs the engine that we would like `myState` to be the initial state for when the game runs. This argument is needed for the game to run and is not optional. Once running, we may change the active game state using `myGame.setState(nextState)`.
+A game state represents a single segment of the game, or a screen. You may for example create one state for the game menu, another for the actual game, yet another for story screen, and so on. Alternatively, you can pack your entire game into a single state - your choice.
+
+In the code above, we're using the state's `draw` function to paint to the screen. This function gets called by the Game object whenever this particular state is active. Note the `state: myState` line which informs the engine that we would like `myState` to be the initial state when the game runs. This argument is needed for the game to run and is not optional. Once running, we may change the active game state using `myGame.setState(nextState)`.
 
 Note the line that reads `simpleLoop: true`. This informs the engine that we would like to make a game where we don't care for logic updates, we only want to draw to the screen. Defining this flag will make the engine run an alternate game loop that's optimized for this mode. Use it if your game relies on user input to "push" the game forward. You will need to code your own timer and transition functions to support animations in this mode. To avoid entering this mode, simpy skip the definition.
 
@@ -98,11 +100,10 @@ myState.draw = function() {
 };
 
 // state update function
-myState.update = function(dt) {
-	// dt is time elapsed in milliseconds since previous update
+myState.update = function() {
 	// increase rotation
 	var speed = 0.1;
-	this.rotation += speed * dt;
+	this.rotation += speed;
 };
 
 // setup the game
@@ -138,7 +139,7 @@ var myGame = new caya.Game({
 });
 ```
 
-The argument `canvasId` is the ID of the `<canvas>` element in the DOM tree. The `state` argument points to the initial game state. Both parameters are required. Optionally, you can define `simpleLoop: true` in the arguments list to make the engine use a simplified loop that doesn't call the `update` function on states.
+The argument `canvasId` is the ID of the `<canvas>` element in the DOM tree. The `state` argument points to the initial game state. Both parameters are required. Optionally, you can define `simpleLoop: true` to the options argument to make the engine use a simplified loop that doesn't call the `update` function on states.
 
 The game will not start automatically. To start the game, use:
 ```JavaScript
@@ -193,7 +194,7 @@ myState.draw = function() {
 	/* draw to screen here */
 };
 
-myState.update = function(dt) {
+myState.update = function() {
 	/* update state here */
 };
 
@@ -218,7 +219,7 @@ var myState = new caya.State({
 	draw: function() {
 		/* draw to screen here */
 	},
-	update: function(dt) {
+	update: function() {
 		/* update state here */
 	},
 	enter: function() { 
@@ -230,7 +231,12 @@ var myState = new caya.State({
 });
 ```
 
-The `init` function initializes and prepares the state and is guaranteed to only be invoked once per state. The `draw` function is used for rendering graphics to screen and `update` is used for updating state logic and is called with the `dt` (delta time) parameter which represents time passed from last update call. When a state becomes active, `enter` is called. Similarly, when the state stops being active, `exit` is called.
+The `init` function initializes and prepares the state and is guaranteed to only be invoked once per state. The `draw` function is used for rendering graphics to screen and `update` is used for updating state logic. When a state becomes active, `enter` is called. Similarly, when the state stops being active, `exit` is called.
+
+To check whether a state is active:
+```JavaScript
+var stateIsActive = myState.isActive();
+```
 
 ### Render
 
@@ -240,6 +246,9 @@ It can be accessed via `state.surface.render` or the shorthand `state.paint`. It
 
 Rendering shapes:
 ```JavaScript
+// line
+line(x1, y1, x2, y2, [lineColor='#fff'], [lineWidth=1]);
+
 // rectangle
 rect(x, y, width, height, [lineColor='#fff'], [lineWidth=1]);
 
@@ -266,7 +275,7 @@ Rendering graphics and tiles:
 graphics(gfxSource, x, y, [width], [height]);
 
 // surface
-surface(surface, x, y);
+surface(surfaceSource, x, y);
 
 // tile
 tile(gfxSource, tileX, tileY, tileWidth, tileHeight, sourceX, sourceY);
@@ -275,7 +284,7 @@ tile(gfxSource, tileX, tileY, tileWidth, tileHeight, sourceX, sourceY);
 stretchTile(gfxSource, tileX, tileY, sourceWidth, sourceHeight, sourceX, sourceY, tileWidth, tileHeight);
 
 // native text
-text(text, x, y, [textColor='#fff'], [alignment='left'], [font='11px sans-serif']);
+text(textString, x, y, [textColor='#fff'], [alignment='left'], [font='11px sans-serif']);
 
 // bitmap text
 bmptext(fontObject, text, x, y, [colorIndex=0], [align=0]);
@@ -335,7 +344,7 @@ In a future version you will also be able to substitute the default renderer wit
 
 ### Surface
 
-A Surface is a class that wraps a `<canvas>` element and includes a renderer. A global surface is instantiated when the game first runs and is available to all game states. You can instantiate your own surfaces to pre-render graphics. This is useful for optimizing expensive graphic calls.
+Surface is a class that wraps a `<canvas>` element and includes a Render. A global surface is instantiatedon the main canvas element when the game first runs and is available to all game states. You can instantiate your own surfaces to pre-render graphics. This is useful for optimizing expensive graphic calls.
 
 To create a Surface object:
 ```JavaScript
@@ -347,7 +356,7 @@ var mySurface = new caya.Surface({
 
 This creates a Surface with its own internal `<canvas>` of specified dimensions.
 
-If you need to, you may also create a Surface to wrap an already existing `<canvas>` element:
+You may also create a Surface that wraps an existing `<canvas>` element:
 ```JavaScript
 var sourceCanvas = document.getElementById('someCanvasID');
 var mySurface = new caya.Surface({
@@ -385,12 +394,12 @@ mySurface.setDefaultClearMethod();
 
 The Input class is used for handling mouse and touch events. The engine does not differentiate between mouse and touch events, they are treated in an equivalent way.
 
-To instantiate an Input object, you need to associate it with a Game object. Simply pass it as an argument:
+To instantiate an Input object, you need to associate it with a Game object:
 ```JavaScript
 var myInputHandler = new caya.Input(myGame);
 ```
 
-The input handler only has a single function, `on`. You can use it to register one of three events: press, move or release:
+You can register events with the `on` function. You can register one of three events: press, move or release:
 ```JavaScript
 myInputHandler.on('press', function(coords) {
 	// mousedown or touch-start has occured
@@ -405,7 +414,47 @@ myInputHandler.on('release', function(coords) {
 });
 ```
 
-`CAUTION` The Input class is not state aware, so you are required to bypass events manually when you're not in the correct state. Note that future versions will add additional functionality that will resolve this but will likely alter the API.
+Note that the above events will fire any time an event is detected, regardless of the currently active state. To associate an event with a state context, you can use `bindTo`:
+
+```JavaScript
+myInputHandler.on('press', function(coords) {
+	/* ... */
+}).bindTo(myState);
+myInputHandler.on('move', function(coords) {
+	/* ... */
+}).bindTo(myState);
+myInputHandler.on('release', function(coords) {
+	/* ... */
+}).bindTo(myState);
+```
+
+Above events will only fire whenever `myState` is the active game state.
+
+If you want to be able to deregister an event, you need to associate an identifier with it:
+
+```JavaScript
+myInputHandler.on('press', function(coords) {
+	/* ... */
+}, 'myId');
+```
+
+To deregister an event, use `off` with a desired identifier:
+
+```JavaScript
+myInputHandler.off('press', 'myId');
+```
+
+To deregister all events of given type:
+
+```JavaScript
+myInputHandler.off('press');
+```
+
+To deregister all events, call `off` with no arguments:
+
+```JavaScript
+myInputHandler.off();
+```
 
 ### KeyInput
 
@@ -421,7 +470,7 @@ To poll last keyboard event:
 var keyEvent = myKeyInputHandler.pollEvent();
 ```
 
-The return value stored in `keyEvent` will contain two properties, `type` and `keycode` - `type` can correspond to `myKeyInputHandler.KEYDOWN` or `myKeyInputHandler.KEYUP`, which are just static values representing event type. The `keycode` property contains a value with the corresponding key code.
+The return value stored in `keyEvent` will contain two properties, `type` and `keycode` - `type` can be either `myKeyInputHandler.KEYDOWN` or `myKeyInputHandler.KEYUP`, which are static values representing the event type. The `keycode` property contains a value with the corresponding key code.
 
 The keyboard handler conatins key codes for all common keys. You can access them in your handler by the key prefix:
 ```JavaScript
@@ -432,7 +481,7 @@ myKeyInputHandler.key1
 myKeyInputHandler.key2
 ```
 
-To clear the event queue:
+To clear the event queue and key buffer:
 ```JavaScript
 myKeyInputHandler.clear();
 ```
@@ -444,12 +493,12 @@ myKeyInputHandler.isAlphanumeric(keyEvent.keycode);
 
 To convert a key code into a character:
 ```JavaScript
-myKeyInputHandler.getASCII(keyEvent.keycode);
+myKeyInputHandler.getCharacter(keyEvent.keycode);
 ```
 
 To check if a given key is in keydown state:
 ```JavaScript
-var key = myKeyInputHandler.keyEnter; // example
+var key = myKeyInputHandler.keyEnter; // check if Enter is currently pressed
 myKeyInputHandler.isKeyDown(key);
 ```
 
@@ -457,7 +506,7 @@ The keyboard handler is typically used in the `update` function of some game sta
 
 Example usage:
 ```JavaScript
-myState.update = function(dt) {
+myState.update = function() {
 	// fetching keyboard events
 	// loop through keyboard events until there are none left
 	var keyEvent;
@@ -595,7 +644,7 @@ myAssetLoader.load({
 
 ### Grid2D
 
-The Grid2D class is a simple container for a 2D matrix of values. It can be instantiated in the following way:
+The Grid2D class is a container for a 2D matrix of values. It can be instantiated in the following way:
 ```JavaScript
 // creates a grid of size 100x100 with the default value 0
 var gridWidth = 100;
@@ -609,7 +658,7 @@ Use the `clear` function to clear the entire grid to the default value specified
 myGrid.clear();
 ```
 
-Note that on instantiation, grid values are undefined until `clear` is applied.
+**Important**: note that on instantiation, every cell in the grid has a value of *undefined* until `clear` is applied (or values are set manually).
 
 Use the `set` function to set a grid value:
 ```JavaScript
@@ -649,8 +698,8 @@ myState.draw = function() {
 	}
 };
 
-myState.update = function(dt) {
-	if (myTimer.run(dt)) {
+myState.update = function() {
+	if (myTimer.run()) {
 		// timer has ticked
 		// toggle visibility of rectangle
 		this.showRectangle = !this.showRectangle;
@@ -658,7 +707,7 @@ myState.update = function(dt) {
 };
 ```
 
-The `run` function is passed the `dt` parameter and reports back whether or not the timer has ticked. Alternatively, you can ignore the return value and check whether the timer has ticked or not by accessing the `ticked` property.
+The `run` function advances the timer state and reports back whether or not the timer has ticked. Alternatively, you can ignore the return value and check whether the timer has ticked or not by accessing the `ticked` property.
 
 You can use the `reset` function to reset the timer back to initial state:
 ```JavaScript
@@ -667,7 +716,7 @@ myTimer.reset();
 
 ### Configuration
 
-The Configuration class provides a way to handle persistant storage for your game. It wraps the localStorage API in a neat and easy to use interface. You may instantiate more than one Configuration as long as keys for each configuration remain unique.
+The Configuration class provides a way to handle persistant storage for your game. It wraps the localStorage API in a neat and easy to use interface. You may instantiate more than one Configuration as long as the key for each configuration remain unique.
 
 A Configuration object is initialized in the following way:
 
@@ -677,7 +726,7 @@ var myDefaultConfig = {
 	foo: 'value',
 	bar: 0
 };
-var myConfig = new Z9.Configuration(myKey, myDefaultConfig);
+var myConfig = new caya.Configuration(myKey, myDefaultConfig);
 ```
 
 A configuration object acts like any other object and you may populate it with any sort of data. A default configuration serves as a template for your configuration. A `load` call needs to be applied at the start of the game to retreive the active configuration. If the key is not found within localStorage, the default configuration will be used.
@@ -701,7 +750,7 @@ myConfig.save();
 
 ### Font
 
-The Font class provides a bitmap font construct. This is useful for some games that only require a limited set of characters. The problem with regular HTML5 text routines is that they can slow the game down if the text is being redrawn over and over again. This can be solved by pre-rendering texts and then drawing those as sprites, but you still can't have dynamic texts unless you develop some sort of a workaround where you dynamically render only changes to the text. The other problem with text is it is very often inconsistent between browsers, where one browser will render your text slightly offset to the top, or the spacing will be different, or hinting, etc. Modern browsers are very complex in their way to render fonts and this comes with its own set of problems with regards to game development. This class essentially dumbs down font rendering by displaying text characters as sprites in a tileset, and provides an interface for ease of use. You are limited to an ASCII range of characters with this class and you will also need to create your own fonts (create graphics and define character widths) to go with it.
+The Font class provides a bitmap font construct. This is useful for some games that only require a limited set of characters. The problem with regular HTML5 text routines is that they can slow the game down if the text is being redrawn over and over again. This can be solved by pre-rendering texts and then drawing those instead, but you still can't have dynamic texts unless you develop some sort of a workaround where you dynamically render only *changes* to the text. The other problem with text is it is very often inconsistent between browsers, where one browser will render your text slightly offset to the top, or the spacing will be different, or hinting, etc. Modern browsers are very complex in their way to render fonts and this comes with its own set of problems with regards to game development. This class essentially dumbs down font rendering by displaying text characters as if they were sprites in a tileset, and provides an interface for ease of use. You are limited to an ASCII range of characters with this class and you will also need to create your own fonts (create graphics and define character widths) to go with it.
 
 Examples on usage can be found in the [/examples/](examples/) folder.
 
@@ -732,7 +781,7 @@ caya.iter(object, function(key, item) {
 });
 ```
 
-`getFilenameExtension` retreives the extension of a filename.
+`getFilenameExtension` retreives the extension of a filename (always outputs lowercase).
 ```JavaScript
 var filename = `file.json';
 caya.getFilenameExtension(filename); // returns 'json'
@@ -748,7 +797,7 @@ var max = 40;
 caya.clamp(number, min, max); // returns 20
 ```
 
-`pointInRect` checks whether a point is within a given rectangle:
+`pointInRect` checks whether a point is within a given rectangle.
 ```JavaScript
 var pointX = 20;
 var pointY = 30;
@@ -759,20 +808,40 @@ var rectHeight = 100;
 caya.pointInRect(pointX, pointY, rectX, rectY, rectWidth, rectHeight); // returns true
 ```
 
-`getRandomInt` returns an integer from a range at random:
+`pointInCircle` checks whether a point is within a given circle.
+```JavaScript
+var pointX = 30;
+var pointY = 30;
+var circleX = 40; // circle center x
+var circleY = 40; // circle center y
+var circleRadius = 20;
+caya.pointInCircle(pointX, pointY, circleX, circleY, circleRadius); // returns true
+```
+
+`getRandomInt` returns an integer from a range at random.
 ```JavaScript
 var min = 20;
 var max = 40;
 caya.getRandomInt(min, max); // returns a number between 20 and 40 (inclusive)
 ```
 
-`shuffle` shuffles an array:
+`coinFlip` returns either true or false at random.
+```JavaScript
+if (caya.coinFlip()) {
+	console.log('heads!');
+}
+else {
+	console.log('tails!');
+}
+```
+
+`shuffle` shuffles an array.
 ```JavaScript
 var values = [1, 2, 4, 8, 16];
 caya.shuffle(values);
 ```
 
-`choose` picks an element from an array at random:
+`choose` picks an element from an array at random.
 ```JavaScript
 var values = [1, 2, 3];
 caya.choose(values); // returns either 1, 2 or 3

@@ -240,46 +240,7 @@
                 </td>
             
 
-            <td class="description last">When set to true, a simple main loop  will be used. This is an alternative version of the core game loop that only does  drawing, and leaves updates to the programmer. Use this if your game does not require  timed events and relies on user events.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>fps</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    60
-                
-                </td>
-            
-
-            <td class="description last">Game FPS (void when simpleLoop=true).</td>
+            <td class="description last">When set to true, a simple main loop  will be used. This is an alternative version of the core game loop that only does  drawing, and leaves updates to the programmer. Use this if your game does not require  timed events and relies on user input to push the game state forward.</td>
         </tr>
 
     
@@ -355,7 +316,7 @@
                 </td>
             
 
-            <td class="description last">List of states to be initialized upon game run.  If states are left uninitialized, they will initialize once as they activate for the  first time. You can safely omit this argument if your states can load independently.  Use initStates() to initialize states manually.</td>
+            <td class="description last">List of states to be initialized upon game run.  If states are left uninitialized, they will initialize once as they activate for the  first time. You can safely omit this argument if your states can load independently.  Alternatively, use initStates() to initialize states manually.</td>
         </tr>
 
     
@@ -403,7 +364,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1404">line 1404</a>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1533">line 1533</a>
     </li></ul></dd>
     
 
@@ -509,7 +470,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1562">line 1562</a>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1695">line 1695</a>
     </li></ul></dd>
     
 
@@ -613,7 +574,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1571">line 1571</a>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1704">line 1704</a>
     </li></ul></dd>
     
 
@@ -717,7 +678,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1674">line 1674</a>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1808">line 1808</a>
     </li></ul></dd>
     
 
@@ -829,7 +790,7 @@
 
             
 
-            <td class="description last">A list of states ready to be initialized.</td>
+            <td class="description last">A list of states to be initialized.</td>
         </tr>
 
     
@@ -870,7 +831,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1581">line 1581</a>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1714">line 1714</a>
     </li></ul></dd>
     
 
@@ -956,7 +917,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1595">line 1595</a>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1727">line 1727</a>
     </li></ul></dd>
     
 
@@ -1091,7 +1052,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1545">line 1545</a>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1677">line 1677</a>
     </li></ul></dd>
     
 
@@ -1229,7 +1190,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1628">line 1628</a>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1762">line 1762</a>
     </li></ul></dd>
     
 
@@ -1315,7 +1276,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1681">line 1681</a>
+        <a href="caya.js.html">caya.js</a>, <a href="caya.js.html#line1815">line 1815</a>
     </li></ul></dd>
     
 
@@ -1365,7 +1326,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jan 31 2019 05:47:40 GMT+0100 (Central Europe Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Oct 22 2019 01:47:43 GMT+0200 (Central Europe Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

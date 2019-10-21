@@ -9,10 +9,10 @@ function BouncyBox(state, options) {
 	var pos = { x: options.x, y: options.y };
 	var vel = { x: options.vel_x, y: options.vel_y };
 
-	this.animate = function(delta) {
+	this.animate = function() {
 		// bounce the box around
-		pos.x += vel.x * delta;
-		pos.y += vel.y * delta;
+		pos.x += vel.x;
+		pos.y += vel.y;
 		if (pos.x <= 0 || pos.x >= 350)
 			vel.x = -vel.x;
 		if (pos.y <= 0 || pos.y >= 250)
@@ -21,7 +21,6 @@ function BouncyBox(state, options) {
 
 	this.draw = function() {
 		// we have access to state's paint
-		state.surface.clear();
 		state.paint.rectFill(pos.x, pos.y, 50, 50, options.color);
 	};
 }
@@ -40,12 +39,13 @@ myState.init = function() {
 	});
 };
 
-myState.update = function(delta) {
+myState.update = function() {
 	// animate the bouncy square
-	this.box.animate(delta);
+	this.box.animate();
 };
 
 myState.draw = function() {
+	this.surface.clear();
 	// draw the bouncy square
 	this.box.draw();
 };
