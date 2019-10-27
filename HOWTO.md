@@ -764,12 +764,12 @@ To construct a tween object:
 new Tween(from, to, duration, onUpdate, onDone, easef, procf);
 ```
 
-`from` and `to` define the range of the tween.
-`duration` is a non-zero, positive number representing the time in milliseconds.
-`onUpdate` is a callback with a `value` parameter that you can use to map the tween to a custom variable.
-`onDone` is a callback that gets called when the tween is done executing.
-`easef` is the easing function. Use one of the functions from caya.ease (caya.ease.linear, caya.ease.quadIn, caya.ease.quadOut, caya.ease.quadInOut, caya.ease.backIn or caya.ease.backOut) or substitute your own. Defaults to caya.ease.linear.
-`procf` is a value post-processing pure function that takes a single number parameter and outputs a single number parameter. Leave undefined for no post-processing. You can use `math.floor`, `math.ceil` for this parameter.
+- `from` and `to` define the range of the tween.
+- `duration` is a non-zero, positive number representing the time in milliseconds.
+- `onUpdate` is a callback with a `value` parameter that you can use to map the tween to a custom variable.
+- `onDone` is a callback that gets called when the tween is done executing.
+- `easef` is the easing function. Use one of the functions from caya.ease (caya.ease.linear, caya.ease.quadIn, caya.ease.quadOut, caya.ease.quadInOut, caya.ease.backIn or caya.ease.backOut) or substitute your own. Defaults to caya.ease.linear.
+- `procf` is a value post-processing pure function that takes a single number parameter and outputs a single number parameter. Leave undefined for no post-processing. You can use `math.floor`, `math.ceil` for this parameter.
 
 All but first three parameters are optional (use `null` to skip the function parameters).
 

@@ -45,7 +45,7 @@ window.addEventListener('load', myGame.run);
 ## Future plans
 
 - More general math, geometry, randomness related functions
-- More general purpose classes (animations, tweening, game-specific data structures, ...)
+- More general purpose classes
 - More render functions
 - Utils (caya.UI, caya.level, ...)
 - More demos
