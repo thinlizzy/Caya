@@ -16,6 +16,7 @@
    - [Timer](#timer)
    - [Configuration](#configuration)
    - [Font](#font)
+   - [Tween](#tween)
 - [Other functions](#other-functions)
    - [General purpose](#general-purpose)
    - [Math and randomness](#math-and-randomness)
@@ -753,6 +754,67 @@ myConfig.save();
 The Font class provides a bitmap font construct. This is useful for some games that only require a limited set of characters. The problem with regular HTML5 text routines is that they can slow the game down if the text is being redrawn over and over again. This can be solved by pre-rendering texts and then drawing those instead, but you still can't have dynamic texts unless you develop some sort of a workaround where you dynamically render only *changes* to the text. The other problem with text is it is very often inconsistent between browsers, where one browser will render your text slightly offset to the top, or the spacing will be different, or hinting, etc. Modern browsers are very complex in their way to render fonts and this comes with its own set of problems with regards to game development. This class essentially dumbs down font rendering by displaying text characters as if they were sprites in a tileset, and provides an interface for ease of use. You are limited to an ASCII range of characters with this class and you will also need to create your own fonts (create graphics and define character widths) to go with it.
 
 Examples on usage can be found in the [/examples/](examples/) folder.
+
+### Tween
+
+The Tween class allows tweening (inbetweening) values in a certain range with a desired easing function. This is useful for animations and typically only used for games that use `simpleLoop` (games that rely on user input to push game state forward). This is an asynchronous method - do not use in a state's `update` function (or at least be very careful with how you handle it - there be dragons).
+
+To construct a tween object:
+```JavaScript
+new Tween(from, to, duration, onUpdate, onDone, easef, procf);
+```
+
+`from` and `to` define the range of the tween.
+`duration` is a non-zero, positive number representing the time in milliseconds.
+`onUpdate` is a callback with a `value` parameter that you can use to map the tween to a custom variable.
+`onDone` is a callback that gets called when the tween is done executing.
+`easef` is the easing function. Use one of the functions from caya.ease (caya.ease.linear, caya.ease.quadIn, caya.ease.quadOut, caya.ease.quadInOut, caya.ease.backIn or caya.ease.backOut) or substitute your own. Defaults to caya.ease.linear.
+`procf` is a value post-processing pure function that takes a single number parameter and outputs a single number parameter. Leave undefined for no post-processing. You can use `math.floor`, `math.ceil` for this parameter.
+
+All but first three parameters are optional (use `null` to skip the function parameters).
+
+The following example tweens from 0 to 2 over 1.5 seconds with quadInOut easing:
+```JavaScript
+(new caya.Tween(0, 2, 1500, function(value) {
+   console.log(value);
+}, function() {
+   console.log('Tween done!');
+}, caya.ease.quadInOut)).start();
+```
+
+The following example tweens from 100 to 0 over 2 seconds with linear easing and floors output values:
+```JavaScript
+(new caya.Tween(100, 0, 2000, function(value) {
+   console.log(value);
+}, function() {
+   console.log('Tween done!');
+}, caya.ease.linear, Math.floor)).start();
+```
+
+To start a tween:
+```JavaScript
+tween.start();
+```
+
+To restart an active tween or start an inactive one:
+```JavaScript
+tween.restart();
+```
+
+To stop a tween:
+```JavaScript
+tween.stop();
+```
+
+To finalize an active tween:
+```JavaScript
+tween.finish();
+```
+
+To check if a tween is active:
+```JavaScript
+bool tweenIsActive = tween.isActive();
+```
 
 ## Other functions
 

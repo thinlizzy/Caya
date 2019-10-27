@@ -4,7 +4,7 @@
  *
  * (c) 2019 Danijel Durakovic
  * MIT License
- * 
+ *
  */
 
 /*jshint globalstrict:true*/
@@ -12,7 +12,7 @@
 
 /**
  * @file Caya
- * @version 0.2.0
+ * @version 0.2.1
  * @author Danijel Durakovic
  * @copyright 2019
  */
@@ -305,6 +305,150 @@ caya.Timer = function(interval) {
 	};
 };
 
+/**
+ * Constructs a Tween object.
+ *
+ * @class caya.Tween
+ * @classdesc Class used for tweening values.
+ *
+ * @param {number} from - Value to tween from.
+ * @param {number} to - Value to tween to.
+ * @param {number} duration - Duration of tween in milliseconds.
+ * @param {tweenUpdateCallback} [onUpdate] - Update callback.
+ * @param {function} [onDone] - Triggers when Tween finishes.
+ * @param {function} [easef=caya.ease.linear] - Easing function. Use one of the functions from caya.ease
+ *   (caya.ease.linear, caya.ease.quadIn, caya.ease.quadOut, caya.ease.quadInOut, caya.ease.backIn or
+ *   caya.ease.backOut) or substitute your own.
+ * @param {function} [procf] - Value post-process function.
+ *
+ * @example
+ * // Tween from 0 to 100 over 1.5 seconds with quadInOut easing
+ * (new caya.Tween(0, 100, 1500, function(value) {
+ *    console.log(value);
+ * }, function() {
+ *    console.log('Tween done!');
+ * }, caya.ease.quadInOut)).start();
+ *
+ * @example
+ * // Tween from 100 to 0 over 2 seconds with linear easing and floor output values.
+ * (new caya.Tween(100, 0, 2000, function(value) {
+ *    console.log(value);
+ * }, function() {
+ *    console.log('Tween done!');
+ * }, caya.ease.linear, Math.floor)).start();
+ */
+caya.Tween = function(from, to, duration, onUpdate, onDone, easef, procf) {
+	if (isNaN(duration) || isNaN(to) || isNaN(from) || duration <= 0) {
+		throw new Error('Erroneous parameters for Tween.');
+	}
+ 	if (!(easef instanceof Function)) {
+		easef = caya.ease.linear;
+	}
+
+	var twTimeout = null;
+	var twFrametime = 5;
+
+	function doTween(elapsed) {
+		var progress = elapsed / duration;
+		var value = from + easef(progress) * (to - from);
+		if (procf instanceof Function) {
+			value = procf(value);
+		}
+		if (onUpdate instanceof Function) {
+			onUpdate(value);
+		}
+		if (progress < 1) {
+			twTimeout = setTimeout(function() {
+				doTween(elapsed + twFrametime);
+			}, twFrametime);
+		}
+		else if (onDone instanceof Function) {
+			onDone();
+			twTimeout = null;
+		}
+	}
+
+	/**
+	 * Halts currently active tween.
+	 */
+	this.stop = function() {
+		clearTimeout(twTimeout);
+		twTimeout = null;
+	};
+
+	/**
+	 * Starts the tween.
+	 */
+	this.start = function() {
+		if (twTimeout === null) {
+			doTween(0);
+		}
+	};
+
+	/**
+	 * Restarts the tween.
+	 */
+	this.restart = function() {
+		if (twTimeout !== null) {
+			clearTimeout(twTimeout);
+		}
+		doTween(0);
+	};
+
+	/**
+	 * Finishes a currently active tween.
+	 */
+	this.finish = function() {
+		if (twTimeout !== null) {
+			clearTimeout(twTimeout);
+			twTimeout = null;
+			if (onUpdate instanceof Function) {
+				onUpdate(to);
+			}
+		}
+	};
+
+	/**
+	 * Reports back the tween active state.
+	 *
+	 * @returns {bool}
+	 */
+	this.isActive = function() {
+		return (twTimeout !== null);
+	};
+};
+/**
+ * @callback tweenUpdateCallback
+ * @param {number} value - Current tween value.
+ */
+
+/**
+ * Easing functions for the Tween class.
+ */
+caya.ease = {
+	linear: function(t) {
+		return t;
+	},
+	quadIn: function(t) {
+		return t * t;
+	},
+	quadOut: function(t) {
+		return t * (2 - t);
+	},
+	quadInOut: function(t) {
+		if (t < 0.5) {
+			return 2 * t * t;
+		}
+		return (4 - 2 * t) * t - 1;
+	},
+	backIn: function(t) {
+		return t * t * t - t * (0.8) * Math.sin(t * Math.PI);
+	},
+	backOut: function(t) {
+		return t * t * t - t * (-1.2) * Math.sin(t * Math.PI);
+	}
+};
+
 ////////////////////////////////////////////////////////////////////////////////////
 //
 //  AssetLoader class
@@ -392,10 +536,6 @@ caya.AssetLoader = function() {
 			}
 		};
 	};
-	/**
-	 * @callback readyCallback
-	 * @param {object} data - Game asset.
-	 */
 
 	/**
 	 * Loads assets from an asset list. Iterates over categories in the list and then calls
@@ -841,7 +981,7 @@ caya.KeyInput = function() {
 	/**
 	 * Poll a single keyboard event from the queue.
 	 *
-	 * @return {keyboardEvent}
+	 * @returns {keyboardEvent}
 	 */
 	this.pollEvent = function() {
 		return eventQueue.shift();
@@ -1014,7 +1154,7 @@ caya.Render = function(ctx) {
 	 * @param {string} [color="#fff"] - Line color.
 	 * @param {number} [width=1] - Line width.
 	 */
-	this.line = function(x1, y1, x2, y2, color, width) {	
+	this.line = function(x1, y1, x2, y2, color, width) {
 		color = (color === undefined) ? '#fff' : color;
 		width = (width === undefined) ? 1 : width;
 		ctx.strokeStyle = color;
@@ -1428,7 +1568,7 @@ caya.Surface = function(options) {
 	/**
 	 * Retreives the canvas object.
 	 *
-	 * @return {object} Canvas object
+	 * @returns {object} Canvas object
 	 */
 	this.getCanvas = function() {
 		return canvas;
@@ -1542,7 +1682,9 @@ caya.State = function(options) {
  *   will be used. This is an alternative version of the core game loop that only does
  *   drawing, and leaves updates to the programmer. Use this if your game does not require
  *   timed events and relies on user input to push the game state forward.
- * @param {number} [options.framerate=60] - Game frame rate (void when simpleLoop=true).
+ * @param {string} [options.viewMode] - Sets view mode. Available options are: 'center',
+ *   'scale-fit', 'scale-stretch' or 'expand'.
+ * @param {number} [options.framerate=60] - Game frame rate (ignored when simpleLoop=true).
  * @param {array} [options.gameStates] - List of states to be initialized upon game run.
  *   If states are left uninitialized, they will initialize once as they activate for the
  *   first time. You can safely omit this argument if your states can load independently.
@@ -1579,7 +1721,7 @@ caya.Game = function(options) {
 			state.update();
 			accumulator -= tickRate;
 			state.draw();
-		}	
+		}
 		requestAnimationFrame(mainLoop);
 	}
 
@@ -1756,7 +1898,7 @@ caya.Game = function(options) {
 	 * Sets the view mode.
 	 *
 	 * @param {string|number} mode - Set the view mode to one of the following:
-	 *   'center', 'scale-fit', 'scale-stretch', or 'expand'.
+	 *   'center', 'scale-fit', 'scale-stretch' or 'expand'.
 	 */
 	this.setViewMode = function(mode) {
 		// remove the update handler and the resize event
@@ -1824,5 +1966,10 @@ caya.Game = function(options) {
 	surface = new caya.Surface({ fromCanvas: canvas });
 	if (options.background) {
 		surface.setFillClearMethod(options.background);
+	}
+
+	// set view mode if provided by options
+	if (options.viewMode) {
+		this.setViewMode(options.viewMode);
 	}
 };

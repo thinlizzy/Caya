@@ -1,3 +1,7 @@
+## 0.2.1 (October 27, 2019)
+- `FEATURE` Add viewMode to Game constructor options.
+- `FEATURE` Add Tween class.
+
 ## 0.2.0 (October 21, 2019)
 - `BUGFIX` Changed KeyInput.keyReturn to KeyInput.keyEnter.
 - `BUGFIX` Changed KeyInput.getASCII to KeyInput.getCharacter.
