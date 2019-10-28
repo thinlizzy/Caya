@@ -75,7 +75,7 @@ A game state represents a single segment of the game, or a screen. You may for e
 
 In the code above, we're using the state's `draw` function to paint to the screen. This function gets called by the Game object whenever this particular state is active. Note the `state: myState` line which informs the engine that we would like `myState` to be the initial state when the game runs. This argument is needed for the game to run and is not optional. Once running, we may change the active game state using `myGame.setState(nextState)`.
 
-Note the line that reads `simpleLoop: true`. This informs the engine that we would like to make a game where we don't care for logic updates, we only want to draw to the screen. Defining this flag will make the engine run an alternate game loop that's optimized for this mode. Use it if your game relies on user input to "push" the game forward. You will need to code your own timer and transition functions to support animations in this mode. To avoid entering this mode, simpy skip the definition.
+Note the line that reads `simpleLoop: true`. This informs the engine that we would like to make a game where we don't care for logic updates, we only want to draw to the screen. Defining this flag will make the engine run an alternate game loop that's optimized for this mode. Use it if your game relies on user input to "push" the game forward. To avoid entering this mode, simpy skip the definition.
 
 What if we want to make a simple animation instead? Let's define both update and draw functions for our state, and let's use a regular loop for our game:
 
@@ -345,7 +345,7 @@ In a future version you will also be able to substitute the default renderer wit
 
 ### Surface
 
-Surface is a class that wraps a `<canvas>` element and includes a Render. A global surface is instantiatedon the main canvas element when the game first runs and is available to all game states. You can instantiate your own surfaces to pre-render graphics. This is useful for optimizing expensive graphic calls.
+Surface is a class that wraps a `<canvas>` element and includes a Render. A global surface is instantiated on the main canvas element when the game first runs and is available to all game states. You can instantiate your own surfaces to pre-render graphics. This is useful for optimizing expensive graphic calls.
 
 To create a Surface object:
 ```JavaScript
@@ -813,7 +813,7 @@ tween.finish();
 
 To check if a tween is active:
 ```JavaScript
-bool tweenIsActive = tween.isActive();
+var tweenIsActive = tween.isActive();
 ```
 
 ## Other functions
